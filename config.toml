@@ -1,0 +1,4 @@
+default_model = "phi3"
+host = "http://localhost:11434"
+streaming = false
+timeout = 600
