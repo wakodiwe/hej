@@ -2,7 +2,7 @@
 
 import logging
 
-from hej.log import get, setup, _ColorFormatter
+from hej.log import _ColorFormatter, get, setup
 
 
 class TestSetup:

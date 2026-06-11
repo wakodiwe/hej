@@ -2,12 +2,12 @@
 
 import logging
 
-logger = logging.getLogger(__name__)
-
 import click
 
 from hej import CONTEXT_SETTINGS, config
 from hej.progress import stream_operation
+
+logger = logging.getLogger(__name__)
 
 
 @click.command("create", context_settings=CONTEXT_SETTINGS)
@@ -35,4 +35,6 @@ def cmd(model, from_model, system, template, quantize, license, host):
     if license:
         payload["license"] = license
 
-    stream_operation("/api/create", model, host, cfg["timeout"], verb="creating", payload=payload)
+    stream_operation(
+        "/api/create", model, host, cfg["timeout"], verb="creating", payload=payload
+    )

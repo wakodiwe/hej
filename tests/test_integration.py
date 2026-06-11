@@ -1,11 +1,8 @@
 """Integration tests with a mocked Ollama HTTP server."""
 
-import json
-
-import pytest
-import requests
 import responses
 from click.testing import CliRunner
+
 from hej.cli import cli
 
 HOST = "http://localhost:11434"
@@ -16,9 +13,17 @@ class TestLs:
     def test_ls(self):
         responses.get(
             f"{HOST}/api/tags",
-            json={"models": [{"name": "phi3:latest", "size": 1234,
-                              "modified_at": "2024-01-15T10:30:00Z",
-                              "digest": "abc123", "details": {}}]},
+            json={
+                "models": [
+                    {
+                        "name": "phi3:latest",
+                        "size": 1234,
+                        "modified_at": "2024-01-15T10:30:00Z",
+                        "digest": "abc123",
+                        "details": {},
+                    }
+                ]
+            },
         )
         result = CliRunner().invoke(cli, ["ls", "--host", HOST])
         assert result.exit_code == 0
@@ -43,10 +48,19 @@ class TestPs:
     def test_ps(self):
         responses.get(
             f"{HOST}/api/ps",
-            json={"models": [{"name": "phi3:latest", "size": 1234,
-                              "digest": "abc", "expires_at": "2024-01-15T12:00:00Z",
-                              "context_length": 8192, "size_vram": 1234,
-                              "details": {}}]},
+            json={
+                "models": [
+                    {
+                        "name": "phi3:latest",
+                        "size": 1234,
+                        "digest": "abc",
+                        "expires_at": "2024-01-15T12:00:00Z",
+                        "context_length": 8192,
+                        "size_vram": 1234,
+                        "details": {},
+                    }
+                ]
+            },
         )
         result = CliRunner().invoke(cli, ["ps", "--host", HOST])
         assert result.exit_code == 0
@@ -65,10 +79,17 @@ class TestShow:
     def test_show(self):
         responses.post(
             f"{HOST}/api/show",
-            json={"details": {"family": "llama", "parameter_size": "3.8B",
-                              "quantization_level": "Q4_0"},
-                  "model_info": {"llama.context_length": 8192},
-                  "capabilities": ["vision"], "parameters": "", "license": ""},
+            json={
+                "details": {
+                    "family": "llama",
+                    "parameter_size": "3.8B",
+                    "quantization_level": "Q4_0",
+                },
+                "model_info": {"llama.context_length": 8192},
+                "capabilities": ["vision"],
+                "parameters": "",
+                "license": "",
+            },
         )
         result = CliRunner().invoke(cli, ["show", "phi3", "--host", HOST])
         assert result.exit_code == 0
@@ -87,8 +108,12 @@ class TestRun:
         responses.get(f"{HOST}/api/tags", status=200)
         responses.post(
             f"{HOST}/api/generate",
-            json={"response": "Hello world", "total_duration": 0,
-                  "eval_count": 3, "eval_duration": 0},
+            json={
+                "response": "Hello world",
+                "total_duration": 0,
+                "eval_count": 3,
+                "eval_duration": 0,
+            },
         )
         result = CliRunner().invoke(cli, ["run", "--host", HOST, "--no-stats", "hello"])
         assert result.exit_code == 0

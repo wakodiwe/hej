@@ -2,7 +2,6 @@
 
 import json
 import logging
-
 from contextlib import contextmanager
 
 import click
@@ -109,9 +108,7 @@ def stream_operation(
                         total = data.get("total", 0)
                         completed = data.get("completed", 0)
                         if task_id is None:
-                            task_id = progress.add_task(
-                                f"{verb} {model}", total=total
-                            )
+                            task_id = progress.add_task(f"{verb} {model}", total=total)
                         progress.update(task_id, completed=completed)
                         if completed >= total and total > 0:
                             progress.update(task_id, completed=total)

@@ -2,19 +2,17 @@
 
 import logging
 
-logger = logging.getLogger(__name__)
-
 import click
-
+import requests
+from rich import box
 from rich.console import Console
 from rich.table import Table
-from rich import box
-
-import requests
 
 from hej import CONTEXT_SETTINGS, config
 from hej.api import api_error
-from hej.utils import fmt_size, fmt_date
+from hej.utils import fmt_date, fmt_size
+
+logger = logging.getLogger(__name__)
 
 
 @click.command("ls", context_settings=CONTEXT_SETTINGS)

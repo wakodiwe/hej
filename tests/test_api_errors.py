@@ -2,6 +2,7 @@
 
 import pytest
 import requests
+
 from hej.api import api_error
 
 

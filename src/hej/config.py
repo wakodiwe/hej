@@ -34,9 +34,7 @@ ENV_MAP: dict[str, str] = {
     "stats": "HEJ_STATS",
 }
 
-XDG_CONFIG_HOME = Path(
-    os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")
-)
+XDG_CONFIG_HOME = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
 CONFIG_DIR = XDG_CONFIG_HOME / "hej"
 CONFIG_PATH = CONFIG_DIR / "config.toml"
 
@@ -58,6 +56,7 @@ def _parse_duration(val: str) -> int | None:
         Integer seconds, or ``None`` if the string cannot be parsed.
     """
     import re
+
     total = 0
     for match in re.finditer(r"(\d+)([smh])", val):
         try:

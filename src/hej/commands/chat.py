@@ -6,14 +6,14 @@ import json
 import logging
 from typing import Iterator
 
-logger = logging.getLogger(__name__)
-
 import click
 import requests
 
 from hej import CONTEXT_SETTINGS, config
-from hej.progress import loading
 from hej.api import api_error, extract_metadata, print_stats
+from hej.progress import loading
+
+logger = logging.getLogger(__name__)
 
 CHAT_API = "/api/chat"
 

@@ -4,8 +4,6 @@ import json
 import logging
 import math
 
-logger = logging.getLogger(__name__)
-
 import click
 import requests
 from rich.console import Console
@@ -15,6 +13,8 @@ from rich.text import Text
 
 from hej import CONTEXT_SETTINGS, config
 from hej.api import api_error
+
+logger = logging.getLogger(__name__)
 
 
 def simple_report(params: dict):
@@ -117,7 +117,9 @@ def _print_parameters(params: dict) -> None:
             if len(parts) == 2:
                 stop_params.append(parts[1].strip())
     if stop_params:
-        Console().print(Panel("\n".join(f"stop {s}" for s in stop_params), title="Parameters"))
+        Console().print(
+            Panel("\n".join(f"stop {s}" for s in stop_params), title="Parameters")
+        )
 
 
 def long_report(params: dict):
@@ -219,7 +221,8 @@ def long_report(params: dict):
         console.print()
 
         full_table = Table(
-            title=f"Full Tensor List ({len(tensors)} tensors)", box=None,
+            title=f"Full Tensor List ({len(tensors)} tensors)",
+            box=None,
         )
         full_table.add_column("#", style="dim", justify="right")
         full_table.add_column("Name", style="cyan")
@@ -245,7 +248,9 @@ def long_report(params: dict):
     console.print(seg_table)
 
     footer = Text()
-    footer.append("Generated with Rich  •  Data source: ollama show --json", style="dim")
+    footer.append(
+        "Generated with Rich  •  Data source: ollama show --json", style="dim"
+    )
     console.print(Panel(footer, expand=False))
 
 
@@ -303,7 +308,17 @@ def _fmt_len(text: str) -> str:
 @click.option("--template", is_flag=True, help="Show template")
 @click.option("--license", "show_license", is_flag=True, help="Show license")
 @click.option("--parameters", is_flag=True, help="Show parameters")
-def cmd(model, host, verbose, json_output, full, modelfile, template, show_license, parameters):
+def cmd(
+    model,
+    host,
+    verbose,
+    json_output,
+    full,
+    modelfile,
+    template,
+    show_license,
+    parameters,
+):
     """Show information for a MODEL"""
     logger.debug("show.cmd(%r)", model)
 

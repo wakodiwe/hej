@@ -1,8 +1,14 @@
 """Tests for hej.config."""
 
-from unittest.mock import patch, mock_open
+from unittest.mock import mock_open, patch
 
-from hej.config import load, DEFAULTS, CONFIG_PATH, _resolve_host, _find_config, _parse_duration
+from hej.config import (
+    DEFAULTS,
+    _find_config,
+    _parse_duration,
+    _resolve_host,
+    load,
+)
 
 
 class TestParseDuration:

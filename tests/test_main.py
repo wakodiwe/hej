@@ -9,6 +9,7 @@ class TestMain:
     @patch("hej.__main__.main")
     def test_module_entry(self, mock_main):
         from hej.__main__ import main as entry_main
+
         entry_main()
         mock_main.assert_called_once()
 

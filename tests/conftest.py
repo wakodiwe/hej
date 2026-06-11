@@ -1,6 +1,7 @@
 """Pytest configuration — clear OLLAMA_* env vars before each test."""
 
 import os
+
 import pytest
 
 OLLAMA_ENV_VARS = [

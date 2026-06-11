@@ -1,8 +1,9 @@
 """Tests for hej.progress."""
 
+from unittest.mock import patch
+
 import pytest
 import requests
-from unittest.mock import patch
 
 from hej.progress import stream_operation
 
@@ -11,7 +12,7 @@ class TestStreamOperation:
     @patch("hej.progress.requests.post")
     def test_empty_lines_skipped(self, mock_post):
         lines = [
-            b'',
+            b"",
             b'{"status":"success"}',
         ]
         mock_resp = mock_post.return_value.__enter__.return_value
@@ -23,7 +24,7 @@ class TestStreamOperation:
     @patch("hej.progress.requests.post")
     def test_malformed_json_skipped(self, mock_post):
         lines = [
-            b'not valid json',
+            b"not valid json",
             b'{"status":"success"}',
         ]
         mock_resp = mock_post.return_value.__enter__.return_value
@@ -57,4 +58,10 @@ class TestStreamOperation:
         mock_resp.iter_lines.return_value = [b'{"status":"success"}']
         mock_resp.raise_for_status.return_value = None
 
-        stream_operation("/api/pull", "phi3", "http://localhost:11434", 600, payload={"model": "phi3", "custom": True})
+        stream_operation(
+            "/api/pull",
+            "phi3",
+            "http://localhost:11434",
+            600,
+            payload={"model": "phi3", "custom": True},
+        )

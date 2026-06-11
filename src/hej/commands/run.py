@@ -2,13 +2,13 @@
 
 import logging
 
-logger = logging.getLogger(__name__)
-
 import click
 
 from hej import CONTEXT_SETTINGS, config
 from hej.api import generate, generate_stream, isrunning, print_stats
 from hej.progress import loading
+
+logger = logging.getLogger(__name__)
 
 
 def _run_streaming(model, prompt, host, timeout, stats=True, keep_alive=None):
@@ -43,7 +43,9 @@ def _run_streaming(model, prompt, host, timeout, stats=True, keep_alive=None):
 def _run_single(model, prompt, host, timeout, stats=True, keep_alive=None):
     """Fetch the full response at once (no streaming)."""
     with loading("Generating response"):
-        response, metadata = generate(model, prompt, host, timeout, keep_alive=keep_alive)
+        response, metadata = generate(
+            model, prompt, host, timeout, keep_alive=keep_alive
+        )
     click.echo(response)
     if stats:
         print_stats(metadata)

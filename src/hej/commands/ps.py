@@ -1,15 +1,15 @@
 """ps command"""
 
-from hej import CONTEXT_SETTINGS, config
-from hej.api import api_error
-from hej.utils import fmt_date, fmt_size
-
 from datetime import datetime
 
 import click
 import requests
 from rich.console import Console
 from rich.table import Table
+
+from hej import CONTEXT_SETTINGS, config
+from hej.api import api_error
+from hej.utils import fmt_date, fmt_size
 
 
 @click.command("ps", context_settings=CONTEXT_SETTINGS)

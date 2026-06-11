@@ -1,6 +1,7 @@
 """Tests for hej.utils."""
 
 import pytest
+
 from hej.utils import fmt_date, fmt_size
 
 

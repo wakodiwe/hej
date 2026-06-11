@@ -2,13 +2,13 @@
 
 import logging
 
-logger = logging.getLogger(__name__)
-
 import click
 import requests
 
 from hej import CONTEXT_SETTINGS, config
 from hej.api import api_error
+
+logger = logging.getLogger(__name__)
 
 
 @click.command("rm", context_settings=CONTEXT_SETTINGS)

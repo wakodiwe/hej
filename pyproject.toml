@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 dependencies = ["click>=8.0", "requests>=2.31", "rich>=13"]
 
 [project.optional-dependencies]
-tests = ["pytest", "responses", "pytest-cov"]
+tests = ["pytest", "responses", "pytest-cov", "black"]
 docs = ["pdoc"]
 
 [project.scripts]

@@ -50,7 +50,8 @@ def print_stats(metadata: dict):
     speed = eval_count / (eval_ns / 1e9) if eval_ns else 0
     click.echo("")
     click.echo(
-        f"Duration: {duration_s:.1f}s  |  Tokens: {eval_count}  |  Speed: {speed:.1f} tok/s"
+        f"Duration: {duration_s:.1f}s  |  Tokens: {eval_count}"
+        f"  |  Speed: {speed:.1f} tok/s"
     )
 
 
@@ -89,7 +90,11 @@ def extract_metadata(data: dict) -> dict:
 
 
 def generate(
-    model: str, prompt: str, host: str, timeout: int, keep_alive: int | str | None = None,
+    model: str,
+    prompt: str,
+    host: str,
+    timeout: int,
+    keep_alive: int | str | None = None,
 ) -> tuple[str, dict]:
     """Send a prompt to ollama and return (response_text, metadata).
 
@@ -108,10 +113,10 @@ def generate(
         payload["keep_alive"] = keep_alive
     try:
         resp = requests.post(
-                f"{host}/api/generate",
-                json=payload,
-                timeout=timeout,
-                )
+            f"{host}/api/generate",
+            json=payload,
+            timeout=timeout,
+        )
         resp.raise_for_status()
     except (requests.ConnectionError, requests.Timeout, requests.HTTPError) as e:
         api_error(e, host)
@@ -120,7 +125,11 @@ def generate(
 
 
 def generate_stream(
-    model: str, prompt: str, host: str, timeout: int, keep_alive: int | str | None = None,
+    model: str,
+    prompt: str,
+    host: str,
+    timeout: int,
+    keep_alive: int | str | None = None,
 ):
     """Yield ("token", str) chunks, then ("stats", dict) on completion.
 
@@ -141,11 +150,11 @@ def generate_stream(
         payload["keep_alive"] = keep_alive
     try:
         with requests.post(
-                f"{host}/api/generate",
-                json=payload,
-                stream=True,
-                timeout=timeout,
-                ) as resp:
+            f"{host}/api/generate",
+            json=payload,
+            stream=True,
+            timeout=timeout,
+        ) as resp:
             resp.raise_for_status()
             first = True
             for line in resp.iter_lines():

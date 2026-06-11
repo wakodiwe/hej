@@ -1,8 +1,9 @@
 """Tests for hej.api functions."""
 
+from unittest.mock import patch
+
 import pytest
 import requests
-from unittest.mock import patch
 
 from hej.api import (
     extract_metadata,
@@ -47,7 +48,13 @@ class TestExtractMetadata:
 
 class TestPrintStats:
     def test_with_eval_count(self):
-        print_stats({"eval_count": 42, "total_duration_ns": 2_000_000_000, "eval_duration_ns": 1_000_000_000})
+        print_stats(
+            {
+                "eval_count": 42,
+                "total_duration_ns": 2_000_000_000,
+                "eval_duration_ns": 1_000_000_000,
+            }
+        )
 
     def test_without_eval_count(self):
         print_stats({})
@@ -74,7 +81,10 @@ class TestGenerate:
 
     @patch("hej.api.requests.post")
     def test_generate_with_keep_alive(self, mock_post):
-        mock_post.return_value.json.return_value = {"response": "ok", "total_duration": 0}
+        mock_post.return_value.json.return_value = {
+            "response": "ok",
+            "total_duration": 0,
+        }
         mock_post.return_value.raise_for_status.return_value = None
         text, meta = generate("phi3", "hi", "http://localhost:11434", 600, keep_alive=0)
         assert text == "ok"
@@ -88,7 +98,8 @@ class TestGenerateStream:
         lines = [
             b'{"response":"Hello","done":false}',
             b'{"response":" world","done":false}',
-            b'{"response":"","done":true,"total_duration":1000,"eval_count":2,"eval_duration":500}',
+            b'{"response":"","done":true,"total_duration":1000,'
+            b'"eval_count":2,"eval_duration":500}',
         ]
         mock_resp = mock_post.return_value.__enter__.return_value
         mock_resp.iter_lines.return_value = lines
@@ -108,13 +119,18 @@ class TestGenerateStream:
     @patch("hej.api.requests.post")
     def test_stream_with_keep_alive(self, mock_post):
         lines = [
-            b'{"response":"ok","done":true,"total_duration":0,"eval_count":1,"eval_duration":0}',
+            b'{"response":"ok","done":true,"total_duration":0,'
+            b'"eval_count":1,"eval_duration":0}',
         ]
         mock_resp = mock_post.return_value.__enter__.return_value
         mock_resp.iter_lines.return_value = lines
         mock_resp.raise_for_status.return_value = None
 
-        results = list(generate_stream("phi3", "hi", "http://localhost:11434", 600, keep_alive="10m"))
+        results = list(
+            generate_stream(
+                "phi3", "hi", "http://localhost:11434", 600, keep_alive="10m"
+            )
+        )
         assert any(t[0] == "token" for t in results)
         call_kwargs = mock_post.call_args[1]
         assert call_kwargs["json"]["keep_alive"] == "10m"
@@ -122,8 +138,9 @@ class TestGenerateStream:
     @patch("hej.api.requests.post")
     def test_stream_with_empty_lines(self, mock_post):
         lines = [
-            b'',
-            b'{"response":"ok","done":true,"total_duration":0,"eval_count":1,"eval_duration":0}',
+            b"",
+            b'{"response":"ok","done":true,"total_duration":0,'
+            b'"eval_count":1,"eval_duration":0}',
         ]
         mock_resp = mock_post.return_value.__enter__.return_value
         mock_resp.iter_lines.return_value = lines
@@ -136,7 +153,7 @@ class TestGenerateStream:
     @patch("hej.api.requests.post")
     def test_stream_skips_malformed(self, mock_post):
         lines = [
-            b'not json',
+            b"not json",
             b'{"response":"ok","done":true,"total_duration":0}',
         ]
         mock_resp = mock_post.return_value.__enter__.return_value

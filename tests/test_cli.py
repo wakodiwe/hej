@@ -1,7 +1,8 @@
-import requests
 from unittest.mock import patch
 
+import requests
 from click.testing import CliRunner
+
 from hej.cli import cli
 
 
@@ -111,21 +112,23 @@ class TestRun:
         assert "keep-alive" in result.output
 
     @patch(
-            "hej.commands.run.config.load",
-            return_value={
-                "default_model": "phi3",
-                "host": "http://localhost:11434",
-                "timeout": 600,
-                "streaming": True,
-                "keep_alive": 0,
-                "stats": True,
-                },
-            )
+        "hej.commands.run.config.load",
+        return_value={
+            "default_model": "phi3",
+            "host": "http://localhost:11434",
+            "timeout": 600,
+            "streaming": True,
+            "keep_alive": 0,
+            "stats": True,
+        },
+    )
     @patch("hej.commands.run.loading")
     @patch(
-            "hej.commands.run.generate_stream",
-            return_value=iter([("token", "Streamed "), ("token", "response"), ("stats", {})]),
-            )
+        "hej.commands.run.generate_stream",
+        return_value=iter(
+            [("token", "Streamed "), ("token", "response"), ("stats", {})]
+        ),
+    )
     @patch("hej.commands.run.isrunning", return_value=True)
     def test_generate_streaming(self, _mock1, _mock2, _mock3, _mock4):
         result = CliRunner().invoke(cli, ["run", "hello"])
@@ -137,9 +140,16 @@ class TestLs:
     @patch("hej.commands.ls.requests.get")
     def test_ls(self, mock_get):
         mock_get.return_value.json.return_value = {
-                "models": [{"name": "phi3:latest", "size": 1234, "modified_at": "2024-01-15T10:30:00Z",
-                            "digest": "abc123def456", "details": {"quantization_level": "Q4_0", "parameter_size": "3.8B"}}]
+            "models": [
+                {
+                    "name": "phi3:latest",
+                    "size": 1234,
+                    "modified_at": "2024-01-15T10:30:00Z",
+                    "digest": "abc123def456",
+                    "details": {"quantization_level": "Q4_0", "parameter_size": "3.8B"},
                 }
+            ]
+        }
         result = CliRunner().invoke(cli, ["ls"])
         assert result.exit_code == 0
         assert "phi3" in result.output
@@ -161,13 +171,18 @@ class TestPs:
     @patch("hej.commands.ps.requests.get")
     def test_ps(self, mock_get):
         mock_get.return_value.json.return_value = {
-                "models": [{"name": "llama3.2:latest", "size": 2019393189,
-                            "digest": "abc123def456ghi789",
-                            "expires_at": "2024-01-15T12:00:00Z",
-                            "context_length": 8192,
-                            "size_vram": 2019393189,
-                            "details": {}}]
+            "models": [
+                {
+                    "name": "llama3.2:latest",
+                    "size": 2019393189,
+                    "digest": "abc123def456ghi789",
+                    "expires_at": "2024-01-15T12:00:00Z",
+                    "context_length": 8192,
+                    "size_vram": 2019393189,
+                    "details": {},
                 }
+            ]
+        }
         result = CliRunner().invoke(cli, ["ps"])
         assert result.exit_code == 0
         assert "llama3.2" in result.output
@@ -182,12 +197,20 @@ class TestPs:
     @patch("hej.commands.ps.requests.get")
     def test_ps_today(self, mock_get):
         from datetime import datetime
+
         today = datetime.today().isoformat()
         mock_get.return_value.json.return_value = {
-            "models": [{"name": "phi3:latest", "size": 1234,
-                        "digest": "abc", "expires_at": today,
-                        "context_length": 8192, "size_vram": 1234,
-                        "details": {}}]
+            "models": [
+                {
+                    "name": "phi3:latest",
+                    "size": 1234,
+                    "digest": "abc",
+                    "expires_at": today,
+                    "context_length": 8192,
+                    "size_vram": 1234,
+                    "details": {},
+                }
+            ]
         }
         result = CliRunner().invoke(cli, ["ps"])
         assert result.exit_code == 0
@@ -202,14 +225,19 @@ class TestShow:
     @patch("hej.commands.show.requests.post")
     def test_show(self, mock_post):
         mock_post.return_value.json.return_value = {
-                "details": {"family": "llama", "parameter_size": "3.8B",
-                            "quantization_level": "Q4_0"},
-                "model_info": {"llama.context_length": 8192,
-                               "llama.embedding_length": 4096},
-                "capabilities": ["vision", "tools"],
-                "parameters": "stop   \"<|endoftext|>\"",
-                "license": "MIT License\nPermission is hereby granted",
-                }
+            "details": {
+                "family": "llama",
+                "parameter_size": "3.8B",
+                "quantization_level": "Q4_0",
+            },
+            "model_info": {
+                "llama.context_length": 8192,
+                "llama.embedding_length": 4096,
+            },
+            "capabilities": ["vision", "tools"],
+            "parameters": 'stop   "<|endoftext|>"',
+            "license": "MIT License\nPermission is hereby granted",
+        }
         result = CliRunner().invoke(cli, ["show", "phi3"])
         assert result.exit_code == 0
         assert "architecture" in result.output
@@ -218,12 +246,12 @@ class TestShow:
     @patch("hej.commands.show.requests.post")
     def test_show_minimal(self, mock_post):
         mock_post.return_value.json.return_value = {
-                "details": {},
-                "model_info": {},
-                "capabilities": [],
-                "parameters": "",
-                "license": "",
-                }
+            "details": {},
+            "model_info": {},
+            "capabilities": [],
+            "parameters": "",
+            "license": "",
+        }
         result = CliRunner().invoke(cli, ["show", "phi3"])
         assert result.exit_code == 0
         assert "unknown" in result.output
@@ -231,16 +259,19 @@ class TestShow:
     @patch("hej.commands.show.requests.post")
     def test_show_full(self, mock_post):
         mock_post.return_value.json.return_value = {
-                "details": {"family": "llama", "parameter_size": "3.8B",
-                            "quantization_level": "Q4_0"},
-                "model_info": {"llama.context_length": 8192},
-                "capabilities": ["vision"],
-                "parameters": "",
-                "license": "",
-                "modelfile": "",
-                "template": "",
-                "tensors": [],
-                }
+            "details": {
+                "family": "llama",
+                "parameter_size": "3.8B",
+                "quantization_level": "Q4_0",
+            },
+            "model_info": {"llama.context_length": 8192},
+            "capabilities": ["vision"],
+            "parameters": "",
+            "license": "",
+            "modelfile": "",
+            "template": "",
+            "tensors": [],
+        }
         result = CliRunner().invoke(cli, ["show", "phi3", "--full"])
         assert result.exit_code == 0
         assert "Model Report" in result.output
@@ -249,18 +280,23 @@ class TestShow:
     @patch("hej.commands.show.requests.post")
     def test_show_full_with_stop_and_tensors(self, mock_post):
         mock_post.return_value.json.return_value = {
-            "details": {"family": "llama", "parameter_size": "3.8B",
-                        "quantization_level": "Q4_0",
-                        "parent_model": "phi3:latest",
-                        "format": "gguf"},
-            "model_info": {"llama.context_length": 8192,
-                           "llama.embedding_length": 512,
-                           "llama.attention.head_count": 32,
-                           "llama.attention.head_count_kv": 8,
-                           "llama.block_count": 32,
-                           "llama.vocab_size": 32000},
+            "details": {
+                "family": "llama",
+                "parameter_size": "3.8B",
+                "quantization_level": "Q4_0",
+                "parent_model": "phi3:latest",
+                "format": "gguf",
+            },
+            "model_info": {
+                "llama.context_length": 8192,
+                "llama.embedding_length": 512,
+                "llama.attention.head_count": 32,
+                "llama.attention.head_count_kv": 8,
+                "llama.block_count": 32,
+                "llama.vocab_size": 32000,
+            },
             "capabilities": ["vision"],
-            "parameters": "stop \"<|endoftext|>\"\nstop \"<|im_end|>\"",
+            "parameters": 'stop "<|endoftext|>"\nstop "<|im_end|>"',
             "license": "MIT",
             "modelfile": "FROM phi3",
             "template": "{{ .Prompt }}",
@@ -298,7 +334,9 @@ class TestShow:
 
     @patch("hej.commands.show.requests.post")
     def test_show_segment_modelfile(self, mock_post):
-        mock_post.return_value.json.return_value = {"modelfile": "FROM phi3\nSYSTEM hello"}
+        mock_post.return_value.json.return_value = {
+            "modelfile": "FROM phi3\nSYSTEM hello"
+        }
         result = CliRunner().invoke(cli, ["show", "phi3", "--modelfile"])
         assert result.exit_code == 0
         assert "FROM phi3" in result.output
@@ -319,7 +357,9 @@ class TestShow:
 
     @patch("hej.commands.show.requests.post")
     def test_show_segment_parameters(self, mock_post):
-        mock_post.return_value.json.return_value = {"parameters": 'stop "<|endoftext|>"'}
+        mock_post.return_value.json.return_value = {
+            "parameters": 'stop "<|endoftext|>"'
+        }
         result = CliRunner().invoke(cli, ["show", "phi3", "--parameters"])
         assert result.exit_code == 0
 
@@ -405,12 +445,18 @@ class TestCreate:
         mock_resp.raise_for_status.return_value = None
 
         args = [
-            "create", "my-model",
-            "--from-model", "phi3",
-            "--system", "You are a helpful assistant",
-            "--template", "{{ .Prompt }}",
-            "--quantize", "q4_K_M",
-            "--license", "MIT",
+            "create",
+            "my-model",
+            "--from-model",
+            "phi3",
+            "--system",
+            "You are a helpful assistant",
+            "--template",
+            "{{ .Prompt }}",
+            "--quantize",
+            "q4_K_M",
+            "--license",
+            "MIT",
         ]
         result = CliRunner().invoke(cli, args)
         assert result.exit_code == 0
@@ -522,11 +568,13 @@ class TestRunStreamingWithLoading:
     @patch("hej.commands.run.loading")
     @patch(
         "hej.commands.run.generate_stream",
-        return_value=iter([
-            ("loading", True),
-            ("token", "Hello"),
-            ("stats", {"load_duration": 100, "eval_count": 5}),
-        ]),
+        return_value=iter(
+            [
+                ("loading", True),
+                ("token", "Hello"),
+                ("stats", {"load_duration": 100, "eval_count": 5}),
+            ]
+        ),
     )
     @patch("hej.commands.run.isrunning", return_value=True)
     def test_streaming_with_load_duration(self, _mock1, _mock2, _mock3, _mock4):

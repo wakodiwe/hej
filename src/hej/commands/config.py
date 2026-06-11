@@ -1,13 +1,13 @@
 """config command — view and manage configuration."""
 
+import logging
 import os
 import subprocess
-import logging
 
 import click
+from rich import box
 from rich.console import Console
 from rich.table import Table
-from rich import box
 
 from hej import CONTEXT_SETTINGS, config
 
@@ -37,12 +37,9 @@ def _make_table(title: str, headers: list[str]) -> Table:
         box=box.SIMPLE,
         show_edge=False,
         pad_edge=False,
-        style=None,
-        header_style=None,
-        title_style=None,
     )
     for h in headers:
-        table.add_column(h, style=None, header_style=None)
+        table.add_column(h)
     return table
 
 
@@ -56,6 +53,7 @@ def _key_source(key: str) -> str:
         try:
             with open(cfg_path, "rb") as f:
                 import tomllib
+
                 cfg_data = tomllib.load(f)
             if key in cfg_data:
                 return "conf"
@@ -79,9 +77,7 @@ def cmd(write_, pretty, path, edit):
 
     if write_:
         if config.CONFIG_PATH.exists():
-            click.confirm(
-                f"Overwrite {config.CONFIG_PATH}?", abort=True
-            )
+            click.confirm(f"Overwrite {config.CONFIG_PATH}?", abort=True)
         _ensure_config_dir()
         config.CONFIG_PATH.write_text(SAMPLE_CONFIG)
         click.echo(f"Wrote config to {config.CONFIG_PATH}")
