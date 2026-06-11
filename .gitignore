@@ -1,0 +1,24 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Packaging / build artefacts
+*.egg-info/
+build/
+dist/
+*.egg
+
+# Virtual envs
+venv/
+.venv/
+
+# .env
+.envrc
+
+# Test / tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
