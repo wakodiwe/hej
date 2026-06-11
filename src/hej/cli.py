@@ -13,7 +13,9 @@ logger = logging.getLogger(__name__)
 
 @click.group(invoke_without_command=True, context_settings=CONTEXT_SETTINGS)
 @click.option("-q", "--quiet", is_flag=True, help="Only show errors")
-@click.option( "-v", "--verbose", count=True, help="Increase verbosity (-v info, -vv debug)")
+@click.option(
+    "-v", "--verbose", count=True, help="Increase verbosity (-v info, -vv debug)"
+)
 @click.option("--no-color", is_flag=True, default=False, help="Disable coloured output")
 @click.version_option(message="%(version)s", version=VERSION)
 @click.pass_context

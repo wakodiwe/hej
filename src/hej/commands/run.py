@@ -15,21 +15,19 @@ def _run_streaming(model, prompt, host, timeout, stats=True, keep_alive=None):
     """Stream tokens from the API."""
     stream = generate_stream(model, prompt, host, timeout, keep_alive=keep_alive)
 
-    first = True
     metadata = {}
 
     with loading("..."):
-        for kind, value in stream:
-            if kind == "loading":
-                pass
-            elif kind == "token":
-                if first:
-                    click.echo(value, nl=False)
-                    first = False
-                else:
-                    click.echo(value, nl=False)
-            elif kind == "stats":
-                metadata = value
+        try:
+            kind, value = next(stream)
+        except StopIteration:
+            return
+
+    for kind, value in stream:
+        if kind == "token":
+            click.echo(value, nl=False)
+        elif kind == "stats":
+            metadata = value
 
     load_duration = metadata.get("load_duration", 0)
     if load_duration > 0:
