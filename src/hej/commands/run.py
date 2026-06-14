@@ -6,7 +6,7 @@ import click
 
 from hej import CONTEXT_SETTINGS, config
 from hej.api import generate, generate_stream, isrunning, print_stats
-from hej.progress import loading
+from hej.progress import wake_progress
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ def _run_streaming(model, prompt, host, timeout, stats=True, keep_alive=None):
 
     metadata = {}
 
-    with loading("..."):
+    with wake_progress(model):
         try:
             kind, value = next(stream)
         except StopIteration:
@@ -29,10 +29,6 @@ def _run_streaming(model, prompt, host, timeout, stats=True, keep_alive=None):
         elif kind == "stats":
             metadata = value
 
-    load_duration = metadata.get("load_duration", 0)
-    if load_duration > 0:
-        click.echo("")
-        click.echo("Model is up and working ...")
     click.echo()
     if stats:
         print_stats(metadata)
@@ -40,7 +36,7 @@ def _run_streaming(model, prompt, host, timeout, stats=True, keep_alive=None):
 
 def _run_single(model, prompt, host, timeout, stats=True, keep_alive=None):
     """Fetch the full response at once (no streaming)."""
-    with loading("Generating response"):
+    with wake_progress(model):
         response, metadata = generate(
             model, prompt, host, timeout, keep_alive=keep_alive
         )

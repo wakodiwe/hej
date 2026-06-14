@@ -51,6 +51,24 @@ def loading(message: str = "Processing..."):
         yield
 
 
+@contextmanager
+def wake_progress(model: str):
+    """Show a loading indicator while waking a model.
+
+    Displays ``<spinner> Waking <model> <elapsed>`` while loading,
+    then clears when the context exits.
+    """
+    progress = Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        TimeElapsedColumn(),
+        transient=True,
+    )
+    with progress:
+        progress.add_task(description=f"Waking {model}", total=None)
+        yield
+
+
 def stream_operation(
     endpoint: str,
     model: str,
