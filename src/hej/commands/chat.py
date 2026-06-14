@@ -103,7 +103,9 @@ def cmd(host, model, stream, stats, timeout, reset):
 
     while True:
         try:
-            user_input = input("\n> ")
+            from prompt_toolkit import prompt
+            user_input = prompt("\n> ", vi_mode=True)
+            # user_input = input("\n> ")
         except EOFError:
             break
 
