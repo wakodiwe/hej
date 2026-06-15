@@ -28,6 +28,7 @@ class TestFmtDate:
 
     def test_invalid_date_string_logs(self, caplog):
         import logging
+
         caplog.set_level(logging.WARNING)
         fmt_date("garbage")
         assert "invalid date string" in caplog.text

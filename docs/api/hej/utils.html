@@ -31,19 +31,7 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="variable" href="#DATE_FORMAT">DATE_FORMAT</a>
-            </li>
-            <li>
-                    <a class="variable" href="#TIME_FORMAT">TIME_FORMAT</a>
-            </li>
-            <li>
-                    <a class="variable" href="#FORMAT_DATETIME">FORMAT_DATETIME</a>
-            </li>
-            <li>
-                    <a class="variable" href="#FORMAT_DATE">FORMAT_DATE</a>
-            </li>
-            <li>
-                    <a class="variable" href="#FORMAT_TIME">FORMAT_TIME</a>
+                    <a class="variable" href="#logger">logger</a>
             </li>
             <li>
                     <a class="function" href="#fmt_date">fmt_date</a>
@@ -78,116 +66,60 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="n">DATE_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">.%m.%y&quot;</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="n">TIME_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;%I:%M&quot;</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="n">FORMAT_DATETIME</span> <span class="o">=</span> <span class="s2">&quot;datetime&quot;</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="n">FORMAT_DATE</span> <span class="o">=</span> <span class="s2">&quot;date&quot;</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="n">FORMAT_TIME</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="k">def</span><span class="w"> </span><span class="nf">fmt_date</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">format_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">FORMAT_DATETIME</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an ISO-8601 datetime string and return a formatted string.</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">    Args:</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">        s: ISO-8601 datetime string to format.</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">        format_type: Format type — ``&quot;datetime&quot;``, ``&quot;date&quot;``, or ``&quot;time&quot;``.</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    Returns:</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">        Formatted date/time string, or empty string for unknown *format_type*.</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="n">_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="n">_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">TIME_FORMAT</span><span class="p">)</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="k">if</span> <span class="n">FORMAT_DATETIME</span> <span class="o">==</span> <span class="n">format_type</span><span class="p">:</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_date</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">_time</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="k">if</span> <span class="n">FORMAT_DATE</span> <span class="o">==</span> <span class="n">format_type</span><span class="p">:</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="n">_date</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="k">if</span> <span class="n">FORMAT_TIME</span> <span class="o">==</span> <span class="n">format_type</span><span class="p">:</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>        <span class="k">return</span> <span class="n">_time</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="k">def</span><span class="w"> </span><span class="nf">fmt_size</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a byte count into a human-readable size string.</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">    Args:</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">        n: Size in bytes. Must be non-negative.</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">    Returns:</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">        Formatted size string (e.g. ``&quot;1.5G&quot;``, ``&quot;3.2T&quot;``, ``&quot;7.0E&quot;``).</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">    Raises:</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">        ValueError: If *n* is negative.</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Size cannot be negative&quot;</span><span class="p">)</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;E&quot;</span><span class="p">):</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1024</span><span class="p">:</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>        <span class="n">n</span> <span class="o">/=</span> <span class="mi">1024</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">E&quot;</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="k">def</span><span class="w"> </span><span class="nf">fmt_date</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">format_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;datetime&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>        <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;invalid date string: </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">.%m.%y&quot;</span><span class="p">)</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="n">_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%I:%M&quot;</span><span class="p">)</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="k">if</span> <span class="n">format_type</span> <span class="o">==</span> <span class="s2">&quot;datetime&quot;</span><span class="p">:</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_date</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">_time</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="k">if</span> <span class="n">format_type</span> <span class="o">==</span> <span class="s2">&quot;date&quot;</span><span class="p">:</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="k">return</span> <span class="n">_date</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="k">if</span> <span class="n">format_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>        <span class="k">return</span> <span class="n">_time</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="k">def</span><span class="w"> </span><span class="nf">fmt_size</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a byte count into a human-readable size string.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    Args:</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">        n: Size in bytes. Must be non-negative.</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">    Returns:</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">        Formatted size string (e.g. ``&quot;1.5G&quot;``, ``&quot;3.2T&quot;``, ``&quot;7.0E&quot;``).</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">    Raises:</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">        ValueError: If *n* is negative.</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Size cannot be negative&quot;</span><span class="p">)</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;E&quot;</span><span class="p">):</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1024</span><span class="p">:</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="n">n</span> <span class="o">/=</span> <span class="mi">1024</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">E&quot;</span>
 </span></pre></div>
 
 
             </section>
-                <section id="DATE_FORMAT">
+                <section id="logger">
                     <div class="attr variable">
-            <span class="name">DATE_FORMAT</span>        =
-<span class="default_value">&#39;%d.%m.%y&#39;</span>
+            <span class="name">logger</span>        =
+<span class="default_value">&lt;Logger <a href="">hej.utils</a> (WARNING)&gt;</span>
 
         
     </div>
-    <a class="headerlink" href="#DATE_FORMAT"></a>
-    
-    
-
-                </section>
-                <section id="TIME_FORMAT">
-                    <div class="attr variable">
-            <span class="name">TIME_FORMAT</span>        =
-<span class="default_value">&#39;%I:%M&#39;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#TIME_FORMAT"></a>
-    
-    
-
-                </section>
-                <section id="FORMAT_DATETIME">
-                    <div class="attr variable">
-            <span class="name">FORMAT_DATETIME</span>        =
-<span class="default_value">&#39;datetime&#39;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#FORMAT_DATETIME"></a>
-    
-    
-
-                </section>
-                <section id="FORMAT_DATE">
-                    <div class="attr variable">
-            <span class="name">FORMAT_DATE</span>        =
-<span class="default_value">&#39;date&#39;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#FORMAT_DATE"></a>
-    
-    
-
-                </section>
-                <section id="FORMAT_TIME">
-                    <div class="attr variable">
-            <span class="name">FORMAT_TIME</span>        =
-<span class="default_value">&#39;time&#39;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#FORMAT_TIME"></a>
+    <a class="headerlink" href="#logger"></a>
     
     
 
@@ -203,39 +135,25 @@
 
     </div>
     <a class="headerlink" href="#fmt_date"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="fmt_date-15"><a href="#fmt_date-15"><span class="linenos">15</span></a><span class="k">def</span><span class="w"> </span><span class="nf">fmt_date</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">format_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">FORMAT_DATETIME</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="fmt_date-16"><a href="#fmt_date-16"><span class="linenos">16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an ISO-8601 datetime string and return a formatted string.</span>
-</span><span id="fmt_date-17"><a href="#fmt_date-17"><span class="linenos">17</span></a>
-</span><span id="fmt_date-18"><a href="#fmt_date-18"><span class="linenos">18</span></a><span class="sd">    Args:</span>
-</span><span id="fmt_date-19"><a href="#fmt_date-19"><span class="linenos">19</span></a><span class="sd">        s: ISO-8601 datetime string to format.</span>
-</span><span id="fmt_date-20"><a href="#fmt_date-20"><span class="linenos">20</span></a><span class="sd">        format_type: Format type — ``&quot;datetime&quot;``, ``&quot;date&quot;``, or ``&quot;time&quot;``.</span>
-</span><span id="fmt_date-21"><a href="#fmt_date-21"><span class="linenos">21</span></a>
-</span><span id="fmt_date-22"><a href="#fmt_date-22"><span class="linenos">22</span></a><span class="sd">    Returns:</span>
-</span><span id="fmt_date-23"><a href="#fmt_date-23"><span class="linenos">23</span></a><span class="sd">        Formatted date/time string, or empty string for unknown *format_type*.</span>
-</span><span id="fmt_date-24"><a href="#fmt_date-24"><span class="linenos">24</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="fmt_date-25"><a href="#fmt_date-25"><span class="linenos">25</span></a>    <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-</span><span id="fmt_date-26"><a href="#fmt_date-26"><span class="linenos">26</span></a>    <span class="n">_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-</span><span id="fmt_date-27"><a href="#fmt_date-27"><span class="linenos">27</span></a>    <span class="n">_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">TIME_FORMAT</span><span class="p">)</span>
-</span><span id="fmt_date-28"><a href="#fmt_date-28"><span class="linenos">28</span></a>    <span class="k">if</span> <span class="n">FORMAT_DATETIME</span> <span class="o">==</span> <span class="n">format_type</span><span class="p">:</span>
-</span><span id="fmt_date-29"><a href="#fmt_date-29"><span class="linenos">29</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_date</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">_time</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="fmt_date-30"><a href="#fmt_date-30"><span class="linenos">30</span></a>    <span class="k">if</span> <span class="n">FORMAT_DATE</span> <span class="o">==</span> <span class="n">format_type</span><span class="p">:</span>
-</span><span id="fmt_date-31"><a href="#fmt_date-31"><span class="linenos">31</span></a>        <span class="k">return</span> <span class="n">_date</span>
-</span><span id="fmt_date-32"><a href="#fmt_date-32"><span class="linenos">32</span></a>    <span class="k">if</span> <span class="n">FORMAT_TIME</span> <span class="o">==</span> <span class="n">format_type</span><span class="p">:</span>
-</span><span id="fmt_date-33"><a href="#fmt_date-33"><span class="linenos">33</span></a>        <span class="k">return</span> <span class="n">_time</span>
-</span><span id="fmt_date-34"><a href="#fmt_date-34"><span class="linenos">34</span></a>    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="fmt_date-12"><a href="#fmt_date-12"><span class="linenos">12</span></a><span class="k">def</span><span class="w"> </span><span class="nf">fmt_date</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">format_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;datetime&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="fmt_date-13"><a href="#fmt_date-13"><span class="linenos">13</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="fmt_date-14"><a href="#fmt_date-14"><span class="linenos">14</span></a>        <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span id="fmt_date-15"><a href="#fmt_date-15"><span class="linenos">15</span></a>    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span id="fmt_date-16"><a href="#fmt_date-16"><span class="linenos">16</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;invalid date string: </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+</span><span id="fmt_date-17"><a href="#fmt_date-17"><span class="linenos">17</span></a>        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</span><span id="fmt_date-18"><a href="#fmt_date-18"><span class="linenos">18</span></a>    <span class="n">_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">.%m.%y&quot;</span><span class="p">)</span>
+</span><span id="fmt_date-19"><a href="#fmt_date-19"><span class="linenos">19</span></a>    <span class="n">_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%I:%M&quot;</span><span class="p">)</span>
+</span><span id="fmt_date-20"><a href="#fmt_date-20"><span class="linenos">20</span></a>    <span class="k">if</span> <span class="n">format_type</span> <span class="o">==</span> <span class="s2">&quot;datetime&quot;</span><span class="p">:</span>
+</span><span id="fmt_date-21"><a href="#fmt_date-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_date</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">_time</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="fmt_date-22"><a href="#fmt_date-22"><span class="linenos">22</span></a>    <span class="k">if</span> <span class="n">format_type</span> <span class="o">==</span> <span class="s2">&quot;date&quot;</span><span class="p">:</span>
+</span><span id="fmt_date-23"><a href="#fmt_date-23"><span class="linenos">23</span></a>        <span class="k">return</span> <span class="n">_date</span>
+</span><span id="fmt_date-24"><a href="#fmt_date-24"><span class="linenos">24</span></a>    <span class="k">if</span> <span class="n">format_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+</span><span id="fmt_date-25"><a href="#fmt_date-25"><span class="linenos">25</span></a>        <span class="k">return</span> <span class="n">_time</span>
+</span><span id="fmt_date-26"><a href="#fmt_date-26"><span class="linenos">26</span></a>    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Parse an ISO-8601 datetime string and return a formatted string.</p>
-
-<p>Args:
-    s: ISO-8601 datetime string to format.
-    format_type: Format type — <code>"datetime"</code>, <code>"date"</code>, or <code>"time"</code>.</p>
-
-<p>Returns:
-    Formatted date/time string, or empty string for unknown <em>format_type</em>.</p>
-</div>
-
+    
 
                 </section>
                 <section id="fmt_size">
@@ -249,25 +167,25 @@
 
     </div>
     <a class="headerlink" href="#fmt_size"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="fmt_size-37"><a href="#fmt_size-37"><span class="linenos">37</span></a><span class="k">def</span><span class="w"> </span><span class="nf">fmt_size</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="fmt_size-38"><a href="#fmt_size-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a byte count into a human-readable size string.</span>
-</span><span id="fmt_size-39"><a href="#fmt_size-39"><span class="linenos">39</span></a>
-</span><span id="fmt_size-40"><a href="#fmt_size-40"><span class="linenos">40</span></a><span class="sd">    Args:</span>
-</span><span id="fmt_size-41"><a href="#fmt_size-41"><span class="linenos">41</span></a><span class="sd">        n: Size in bytes. Must be non-negative.</span>
-</span><span id="fmt_size-42"><a href="#fmt_size-42"><span class="linenos">42</span></a>
-</span><span id="fmt_size-43"><a href="#fmt_size-43"><span class="linenos">43</span></a><span class="sd">    Returns:</span>
-</span><span id="fmt_size-44"><a href="#fmt_size-44"><span class="linenos">44</span></a><span class="sd">        Formatted size string (e.g. ``&quot;1.5G&quot;``, ``&quot;3.2T&quot;``, ``&quot;7.0E&quot;``).</span>
-</span><span id="fmt_size-45"><a href="#fmt_size-45"><span class="linenos">45</span></a>
-</span><span id="fmt_size-46"><a href="#fmt_size-46"><span class="linenos">46</span></a><span class="sd">    Raises:</span>
-</span><span id="fmt_size-47"><a href="#fmt_size-47"><span class="linenos">47</span></a><span class="sd">        ValueError: If *n* is negative.</span>
-</span><span id="fmt_size-48"><a href="#fmt_size-48"><span class="linenos">48</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="fmt_size-49"><a href="#fmt_size-49"><span class="linenos">49</span></a>    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="fmt_size-50"><a href="#fmt_size-50"><span class="linenos">50</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Size cannot be negative&quot;</span><span class="p">)</span>
-</span><span id="fmt_size-51"><a href="#fmt_size-51"><span class="linenos">51</span></a>    <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;E&quot;</span><span class="p">):</span>
-</span><span id="fmt_size-52"><a href="#fmt_size-52"><span class="linenos">52</span></a>        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1024</span><span class="p">:</span>
-</span><span id="fmt_size-53"><a href="#fmt_size-53"><span class="linenos">53</span></a>            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="fmt_size-54"><a href="#fmt_size-54"><span class="linenos">54</span></a>        <span class="n">n</span> <span class="o">/=</span> <span class="mi">1024</span>
-</span><span id="fmt_size-55"><a href="#fmt_size-55"><span class="linenos">55</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">E&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="fmt_size-29"><a href="#fmt_size-29"><span class="linenos">29</span></a><span class="k">def</span><span class="w"> </span><span class="nf">fmt_size</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="fmt_size-30"><a href="#fmt_size-30"><span class="linenos">30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a byte count into a human-readable size string.</span>
+</span><span id="fmt_size-31"><a href="#fmt_size-31"><span class="linenos">31</span></a>
+</span><span id="fmt_size-32"><a href="#fmt_size-32"><span class="linenos">32</span></a><span class="sd">    Args:</span>
+</span><span id="fmt_size-33"><a href="#fmt_size-33"><span class="linenos">33</span></a><span class="sd">        n: Size in bytes. Must be non-negative.</span>
+</span><span id="fmt_size-34"><a href="#fmt_size-34"><span class="linenos">34</span></a>
+</span><span id="fmt_size-35"><a href="#fmt_size-35"><span class="linenos">35</span></a><span class="sd">    Returns:</span>
+</span><span id="fmt_size-36"><a href="#fmt_size-36"><span class="linenos">36</span></a><span class="sd">        Formatted size string (e.g. ``&quot;1.5G&quot;``, ``&quot;3.2T&quot;``, ``&quot;7.0E&quot;``).</span>
+</span><span id="fmt_size-37"><a href="#fmt_size-37"><span class="linenos">37</span></a>
+</span><span id="fmt_size-38"><a href="#fmt_size-38"><span class="linenos">38</span></a><span class="sd">    Raises:</span>
+</span><span id="fmt_size-39"><a href="#fmt_size-39"><span class="linenos">39</span></a><span class="sd">        ValueError: If *n* is negative.</span>
+</span><span id="fmt_size-40"><a href="#fmt_size-40"><span class="linenos">40</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="fmt_size-41"><a href="#fmt_size-41"><span class="linenos">41</span></a>    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="fmt_size-42"><a href="#fmt_size-42"><span class="linenos">42</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Size cannot be negative&quot;</span><span class="p">)</span>
+</span><span id="fmt_size-43"><a href="#fmt_size-43"><span class="linenos">43</span></a>    <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;E&quot;</span><span class="p">):</span>
+</span><span id="fmt_size-44"><a href="#fmt_size-44"><span class="linenos">44</span></a>        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1024</span><span class="p">:</span>
+</span><span id="fmt_size-45"><a href="#fmt_size-45"><span class="linenos">45</span></a>            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="fmt_size-46"><a href="#fmt_size-46"><span class="linenos">46</span></a>        <span class="n">n</span> <span class="o">/=</span> <span class="mi">1024</span>
+</span><span id="fmt_size-47"><a href="#fmt_size-47"><span class="linenos">47</span></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">E&quot;</span>
 </span></pre></div>
 
 

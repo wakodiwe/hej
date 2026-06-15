@@ -8,16 +8,6 @@ from collections.abc import Generator
 from contextlib import contextmanager
 
 import click
-import requests
-from rich.progress import (
-    BarColumn,
-    Progress,
-    SpinnerColumn,
-    TextColumn,
-    TimeElapsedColumn,
-    TimeRemainingColumn,
-    TransferSpeedColumn,
-)
 
 from hej.api import api_error
 
@@ -31,6 +21,8 @@ def loading(message: str = "Processing...") -> Generator[None, None, None]:
     Args:
         message: Description text to display next to the spinner.
     """
+    from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+
     progress = Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
@@ -49,6 +41,8 @@ def wake_progress(model: str) -> Generator[None, None, None]:
     Displays ``<spinner> Waking <model> <elapsed>`` while loading,
     then clears when the context exits.
     """
+    from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+
     progress = Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
@@ -87,6 +81,15 @@ def stream_operation(
     Raises:
         requests.RequestException: On HTTP or connection errors.
     """
+    import requests
+    from rich.progress import (
+        BarColumn,
+        Progress,
+        TextColumn,
+        TimeRemainingColumn,
+        TransferSpeedColumn,
+    )
+
     if payload is None:
         payload = {"model": model}
     try:

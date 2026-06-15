@@ -5,9 +5,6 @@ import os
 import subprocess
 
 import click
-from rich import box
-from rich.console import Console
-from rich.table import Table
 
 from hej import CONTEXT_SETTINGS, config
 
@@ -86,6 +83,10 @@ def cmd(write_: bool, pretty: bool, path: bool, edit: bool) -> None:
 
 def _show_pretty() -> None:
     """Display where each value comes from."""
+    from rich import box
+    from rich.console import Console
+    from rich.table import Table
+
     console = Console(no_color=True, highlight=False)
     cfg = config.load()
 

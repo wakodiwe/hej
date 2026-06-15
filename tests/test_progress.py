@@ -9,7 +9,7 @@ from hej.progress import stream_operation
 
 
 class TestStreamOperation:
-    @patch("hej.progress.requests.post")
+    @patch("requests.post")
     def test_empty_lines_skipped(self, mock_post):
         lines = [
             b"",
@@ -21,7 +21,7 @@ class TestStreamOperation:
 
         stream_operation("/api/pull", "phi3", "http://localhost:11434", 600)
 
-    @patch("hej.progress.requests.post")
+    @patch("requests.post")
     def test_malformed_json_skipped(self, mock_post):
         lines = [
             b"not valid json",
@@ -34,12 +34,12 @@ class TestStreamOperation:
             stream_operation("/api/pull", "phi3", "http://localhost:11434", 600)
             mock_logger.warning.assert_called_once()
 
-    @patch("hej.progress.requests.post", side_effect=requests.ConnectionError)
+    @patch("requests.post", side_effect=requests.ConnectionError)
     def test_connection_error(self, mock_post):
         with pytest.raises(SystemExit):
             stream_operation("/api/pull", "phi3", "http://localhost:11434", 600)
 
-    @patch("hej.progress.requests.post")
+    @patch("requests.post")
     def test_digest_progress(self, mock_post):
         lines = [
             b'{"status":"pulling","digest":"abc","total":100,"completed":30}',
@@ -52,7 +52,7 @@ class TestStreamOperation:
 
         stream_operation("/api/pull", "phi3", "http://localhost:11434", 600)
 
-    @patch("hej.progress.requests.post")
+    @patch("requests.post")
     def test_custom_payload(self, mock_post):
         mock_resp = mock_post.return_value.__enter__.return_value
         mock_resp.iter_lines.return_value = [b'{"status":"success"}']

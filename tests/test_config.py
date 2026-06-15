@@ -41,6 +41,7 @@ class TestResolveHost:
 
     def test_raises_on_spaces(self):
         import pytest
+
         with pytest.raises(ValueError, match="Invalid host"):
             _resolve_host("bad host:11434")
 

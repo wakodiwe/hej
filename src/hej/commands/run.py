@@ -26,7 +26,12 @@ logger = logging.getLogger(__name__)
 
 
 def _run_streaming(
-    model: str, prompt: str, host: str, timeout: int, stats: bool = True, keep_alive: int | str | None = None
+    model: str,
+    prompt: str,
+    host: str,
+    timeout: int,
+    stats: bool = True,
+    keep_alive: int | str | None = None,
 ) -> None:
     """Stream tokens from the API."""
     stream = generate_stream(model, prompt, host, timeout, keep_alive=keep_alive)
@@ -52,7 +57,12 @@ def _run_streaming(
 
 
 def _run_single(
-    model: str, prompt: str, host: str, timeout: int, stats: bool = True, keep_alive: int | str | None = None
+    model: str,
+    prompt: str,
+    host: str,
+    timeout: int,
+    stats: bool = True,
+    keep_alive: int | str | None = None,
 ) -> None:
     """Fetch the full response at once (no streaming)."""
     with wake_progress(model):
@@ -68,6 +78,7 @@ def _run_single(
 @click.argument("prompt")
 @click.option("--host", help="Ollama server URL")
 @click.option("-m", "--model", help="Model name")
+@click.option("-t", "--template", "template_name", help="Prompt template name")
 @click.option("--stream/--no-stream", default=None, help="Stream output")
 @click.option("--stats/--no-stats", default=None, help="Show timing stats")
 @click.option("--timeout", type=int, help="Request timeout in seconds")
@@ -75,6 +86,7 @@ def _run_single(
 def cmd(
     prompt: str,
     model: str | None = None,
+    template_name: str | None = None,
     host: str | None = None,
     stream: bool | None = None,
     stats: bool | None = None,
@@ -82,6 +94,8 @@ def cmd(
     keep_alive: int | None = None,
 ) -> None:
     """Run a model"""
+    from hej.commands.template import apply_template, load_template
+
     logger.debug("run.cmd(%r, model=%r)", prompt, model)
 
     cfg = config.load()
@@ -91,6 +105,13 @@ def cmd(
     model = model or cfg["default_model"]
     keep_alive = keep_alive if keep_alive is not None else cfg["keep_alive"]
     stats = stats if stats is not None else cfg["stats"]
+
+    if template_name:
+        tmpl = load_template(template_name)
+        if tmpl is None:
+            click.echo(f"Template '{template_name}' not found", err=True)
+            raise SystemExit(1)
+        prompt = apply_template(tmpl, prompt)
 
     if not isrunning(host):
         click.echo("Error: Ollama server is not running", err=True)

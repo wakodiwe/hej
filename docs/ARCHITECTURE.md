@@ -10,7 +10,7 @@ hej is a CLI client for Ollama's HTTP API, organized as a Click-based multi-comm
 CLI (cli.py)
   ├── Config (config.py)     ← TOML + env vars
   ├── Logging (log.py)       ← ANSI-colored output
-  ├── Commands (commands/)   ← 13 @click.command modules
+  ├── Commands (commands/)   ← 18 @click.command/@click.group modules
   │     └── Progress (progress.py)  ← Rich progress bars
   └── API (api.py)           ← Ollama HTTP client (requests)
         └── Ollama server    ← http://localhost:11434

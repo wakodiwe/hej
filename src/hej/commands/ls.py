@@ -3,10 +3,6 @@
 import logging
 
 import click
-import requests
-from rich import box
-from rich.console import Console
-from rich.table import Table
 
 from hej import CONTEXT_SETTINGS, config
 from hej.api import api_error
@@ -20,6 +16,11 @@ logger = logging.getLogger(__name__)
 @click.option("--timeout", type=int, help="Request timeout in seconds")
 def cmd(host: str | None = None, timeout: int | None = None) -> None:
     """List Ollama models."""
+
+    import requests
+    from rich import box
+    from rich.console import Console
+    from rich.table import Table
 
     logger.debug(__name__)
 

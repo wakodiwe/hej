@@ -8,7 +8,6 @@ import sys
 from collections.abc import Iterator
 
 import click
-import requests
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +19,8 @@ def api_error(e: Exception, host: str = "") -> None:
         e: The exception that occurred.
         host: The Ollama server host URL (used in connection error messages).
     """
+    import requests
+
     if isinstance(e, requests.ConnectionError):
         logger.error("Connection error to %s: %s", host, e)
         click.echo(f"Error: cannot connect to Ollama server at {host}", err=True)
@@ -69,6 +70,8 @@ def isrunning(host: str) -> bool:
     Returns:
         True if the server responds within 5 seconds.
     """
+    import requests
+
     try:
         requests.get(f"{host}/api/tags", timeout=5)
         return True
@@ -113,6 +116,8 @@ def generate(
     Returns:
         Tuple of (response text, metadata dict).
     """
+    import requests
+
     payload: dict = {"model": model, "prompt": prompt, "stream": False}
     if keep_alive is not None:
         payload["keep_alive"] = keep_alive
@@ -151,10 +156,14 @@ def generate_stream(
     Yields:
         Tuples of (str, object) — see description above.
     """
+    import requests
+
     payload: dict = {"model": model, "prompt": prompt, "stream": True}
     if keep_alive is not None:
         payload["keep_alive"] = keep_alive
-    logger.debug("POST %s/api/generate (stream) model=%s timeout=%d", host, model, timeout)
+    logger.debug(
+        "POST %s/api/generate (stream) model=%s timeout=%d", host, model, timeout
+    )
     try:
         with requests.post(
             f"{host}/api/generate",
