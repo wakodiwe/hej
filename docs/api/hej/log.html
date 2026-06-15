@@ -33,9 +33,6 @@
             <li>
                     <a class="function" href="#setup">setup</a>
             </li>
-            <li>
-                    <a class="function" href="#get">get</a>
-            </li>
     </ul>
 
 
@@ -55,8 +52,7 @@
                         <div class="docstring"><p>Centralized logging setup.</p>
 
 <p>Public API:
-    log.setup(verbosity, quiet, color)   # call once, in cli()
-    log.get(name)                        # convenience for getLogger</p>
+    log.setup(verbosity, quiet, color)   # call once, in cli()</p>
 </div>
 
                         <input id="mod-log-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -67,11 +63,11 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">Public API:</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="sd">    log.setup(verbosity, quiet, color)   # call once, in cli()</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">    log.get(name)                        # convenience for getLogger</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="n">_RESET</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
@@ -97,38 +93,48 @@
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="n">verbosity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure the root logger. Safe to call multiple times.</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="k">class</span><span class="w"> </span><span class="nc">_JsonFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;JSON log formatter — emits one JSON object per line.&quot;&quot;&quot;</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">    Args:</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">        verbosity: Number of ``-v`` flags (0=WARNING, 1=INFO, 2=DEBUG).</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">        quiet: If True, only show ERROR level messages.</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">        color: If True, use ANSI colour codes for log levels.</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="k">if</span> <span class="n">quiet</span><span class="p">:</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="n">level</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="n">level</span> <span class="o">=</span> <span class="n">_LEVELS</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_LEVELS</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>            <span class="p">{</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>                <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">formatTime</span><span class="p">(</span><span class="n">record</span><span class="p">),</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>                <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span><span class="p">,</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">getMessage</span><span class="p">(),</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>            <span class="p">}</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="p">)</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="k">if</span> <span class="n">color</span><span class="p">:</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">_ColorFormatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">))</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">))</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">handler</span><span class="p">],</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="n">verbosity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>    <span class="n">color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="n">json_output</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure the root logger. Safe to call multiple times.</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">:</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Shortcut for logging.getLogger(name).</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">    Args:</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">        name: Logger name (typically ``__name__``).</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">    Returns:</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">        A :class:`logging.Logger` instance.</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">    Args:</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">        verbosity: Number of ``-v`` flags (0=WARNING, 1=INFO, 2=DEBUG).</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="sd">        quiet: If True, only show ERROR level messages.</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">        color: If True, use ANSI colour codes for log levels.</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">        json_output: If True, emit JSON-formatted log lines.</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>    <span class="k">if</span> <span class="n">quiet</span><span class="p">:</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="n">level</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>        <span class="n">level</span> <span class="o">=</span> <span class="n">_LEVELS</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_LEVELS</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="n">handler</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="k">if</span> <span class="n">json_output</span><span class="p">:</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">_JsonFormatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">))</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="k">elif</span> <span class="n">color</span><span class="p">:</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">_ColorFormatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">))</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">))</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">handler</span><span class="p">],</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -138,32 +144,40 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">setup</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">verbosity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>, </span><span class="param"><span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>, </span><span class="param"><span class="n">color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">setup</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">verbosity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>,</span><span class="param">	<span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">json_output</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <label class="view-source-button" for="setup-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#setup"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="setup-36"><a href="#setup-36"><span class="linenos">36</span></a><span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="n">verbosity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="setup-37"><a href="#setup-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure the root logger. Safe to call multiple times.</span>
-</span><span id="setup-38"><a href="#setup-38"><span class="linenos">38</span></a>
-</span><span id="setup-39"><a href="#setup-39"><span class="linenos">39</span></a><span class="sd">    Args:</span>
-</span><span id="setup-40"><a href="#setup-40"><span class="linenos">40</span></a><span class="sd">        verbosity: Number of ``-v`` flags (0=WARNING, 1=INFO, 2=DEBUG).</span>
-</span><span id="setup-41"><a href="#setup-41"><span class="linenos">41</span></a><span class="sd">        quiet: If True, only show ERROR level messages.</span>
-</span><span id="setup-42"><a href="#setup-42"><span class="linenos">42</span></a><span class="sd">        color: If True, use ANSI colour codes for log levels.</span>
-</span><span id="setup-43"><a href="#setup-43"><span class="linenos">43</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="setup-44"><a href="#setup-44"><span class="linenos">44</span></a>    <span class="k">if</span> <span class="n">quiet</span><span class="p">:</span>
-</span><span id="setup-45"><a href="#setup-45"><span class="linenos">45</span></a>        <span class="n">level</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span>
-</span><span id="setup-46"><a href="#setup-46"><span class="linenos">46</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="setup-47"><a href="#setup-47"><span class="linenos">47</span></a>        <span class="n">level</span> <span class="o">=</span> <span class="n">_LEVELS</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_LEVELS</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
-</span><span id="setup-48"><a href="#setup-48"><span class="linenos">48</span></a>
-</span><span id="setup-49"><a href="#setup-49"><span class="linenos">49</span></a>    <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
-</span><span id="setup-50"><a href="#setup-50"><span class="linenos">50</span></a>    <span class="k">if</span> <span class="n">color</span><span class="p">:</span>
-</span><span id="setup-51"><a href="#setup-51"><span class="linenos">51</span></a>        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">_ColorFormatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">))</span>
-</span><span id="setup-52"><a href="#setup-52"><span class="linenos">52</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="setup-53"><a href="#setup-53"><span class="linenos">53</span></a>        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">))</span>
-</span><span id="setup-54"><a href="#setup-54"><span class="linenos">54</span></a>
-</span><span id="setup-55"><a href="#setup-55"><span class="linenos">55</span></a>    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">handler</span><span class="p">],</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="setup-50"><a href="#setup-50"><span class="linenos">50</span></a><span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
+</span><span id="setup-51"><a href="#setup-51"><span class="linenos">51</span></a>    <span class="n">verbosity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+</span><span id="setup-52"><a href="#setup-52"><span class="linenos">52</span></a>    <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="setup-53"><a href="#setup-53"><span class="linenos">53</span></a>    <span class="n">color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="setup-54"><a href="#setup-54"><span class="linenos">54</span></a>    <span class="n">json_output</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="setup-55"><a href="#setup-55"><span class="linenos">55</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="setup-56"><a href="#setup-56"><span class="linenos">56</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure the root logger. Safe to call multiple times.</span>
+</span><span id="setup-57"><a href="#setup-57"><span class="linenos">57</span></a>
+</span><span id="setup-58"><a href="#setup-58"><span class="linenos">58</span></a><span class="sd">    Args:</span>
+</span><span id="setup-59"><a href="#setup-59"><span class="linenos">59</span></a><span class="sd">        verbosity: Number of ``-v`` flags (0=WARNING, 1=INFO, 2=DEBUG).</span>
+</span><span id="setup-60"><a href="#setup-60"><span class="linenos">60</span></a><span class="sd">        quiet: If True, only show ERROR level messages.</span>
+</span><span id="setup-61"><a href="#setup-61"><span class="linenos">61</span></a><span class="sd">        color: If True, use ANSI colour codes for log levels.</span>
+</span><span id="setup-62"><a href="#setup-62"><span class="linenos">62</span></a><span class="sd">        json_output: If True, emit JSON-formatted log lines.</span>
+</span><span id="setup-63"><a href="#setup-63"><span class="linenos">63</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="setup-64"><a href="#setup-64"><span class="linenos">64</span></a>    <span class="k">if</span> <span class="n">quiet</span><span class="p">:</span>
+</span><span id="setup-65"><a href="#setup-65"><span class="linenos">65</span></a>        <span class="n">level</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span>
+</span><span id="setup-66"><a href="#setup-66"><span class="linenos">66</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="setup-67"><a href="#setup-67"><span class="linenos">67</span></a>        <span class="n">level</span> <span class="o">=</span> <span class="n">_LEVELS</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">verbosity</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_LEVELS</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+</span><span id="setup-68"><a href="#setup-68"><span class="linenos">68</span></a>
+</span><span id="setup-69"><a href="#setup-69"><span class="linenos">69</span></a>    <span class="n">handler</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+</span><span id="setup-70"><a href="#setup-70"><span class="linenos">70</span></a>    <span class="k">if</span> <span class="n">json_output</span><span class="p">:</span>
+</span><span id="setup-71"><a href="#setup-71"><span class="linenos">71</span></a>        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">_JsonFormatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">))</span>
+</span><span id="setup-72"><a href="#setup-72"><span class="linenos">72</span></a>    <span class="k">elif</span> <span class="n">color</span><span class="p">:</span>
+</span><span id="setup-73"><a href="#setup-73"><span class="linenos">73</span></a>        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">_ColorFormatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">))</span>
+</span><span id="setup-74"><a href="#setup-74"><span class="linenos">74</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="setup-75"><a href="#setup-75"><span class="linenos">75</span></a>        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">))</span>
+</span><span id="setup-76"><a href="#setup-76"><span class="linenos">76</span></a>
+</span><span id="setup-77"><a href="#setup-77"><span class="linenos">77</span></a>    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">handler</span><span class="p">],</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -172,42 +186,8 @@
 <p>Args:
     verbosity: Number of <code>-v</code> flags (0=WARNING, 1=INFO, 2=DEBUG).
     quiet: If True, only show ERROR level messages.
-    color: If True, use ANSI colour codes for log levels.</p>
-</div>
-
-
-                </section>
-                <section id="get">
-                            <input id="get-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">name</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span>:</span></span>
-
-                <label class="view-source-button" for="get-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#get"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get-58"><a href="#get-58"><span class="linenos">58</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">:</span>
-</span><span id="get-59"><a href="#get-59"><span class="linenos">59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Shortcut for logging.getLogger(name).</span>
-</span><span id="get-60"><a href="#get-60"><span class="linenos">60</span></a>
-</span><span id="get-61"><a href="#get-61"><span class="linenos">61</span></a><span class="sd">    Args:</span>
-</span><span id="get-62"><a href="#get-62"><span class="linenos">62</span></a><span class="sd">        name: Logger name (typically ``__name__``).</span>
-</span><span id="get-63"><a href="#get-63"><span class="linenos">63</span></a>
-</span><span id="get-64"><a href="#get-64"><span class="linenos">64</span></a><span class="sd">    Returns:</span>
-</span><span id="get-65"><a href="#get-65"><span class="linenos">65</span></a><span class="sd">        A :class:`logging.Logger` instance.</span>
-</span><span id="get-66"><a href="#get-66"><span class="linenos">66</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="get-67"><a href="#get-67"><span class="linenos">67</span></a>    <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Shortcut for logging.getLogger(name).</p>
-
-<p>Args:
-    name: Logger name (typically <code>__name__</code>).</p>
-
-<p>Returns:
-    A <code>logging.Logger</code> instance.</p>
+    color: If True, use ANSI colour codes for log levels.
+    json_output: If True, emit JSON-formatted log lines.</p>
 </div>
 
 

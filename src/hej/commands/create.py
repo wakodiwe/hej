@@ -31,6 +31,8 @@ def cmd(
     cfg = config.load()
     host = host or cfg["host"]
 
+    logger.debug("create %s from %s", model, from_model or "(none)")
+
     payload = {"model": model}
     if from_model:
         payload["from"] = from_model

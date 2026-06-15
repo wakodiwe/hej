@@ -1,5 +1,6 @@
 """ps command"""
 
+import logging
 from datetime import datetime
 
 import click
@@ -7,6 +8,8 @@ import click
 from hej import CONTEXT_SETTINGS, config
 from hej.api import api_error
 from hej.utils import fmt_date, fmt_size
+
+logger = logging.getLogger(__name__)
 
 
 @click.command("ps", context_settings=CONTEXT_SETTINGS)
@@ -19,6 +22,8 @@ def cmd(host: str | None = None) -> None:
 
     cfg = config.load()
     host = host or cfg["host"]
+
+    logger.debug("ps host=%s", host)
 
     try:
         response = requests.get(f"{host}/api/ps", timeout=cfg["timeout"])
@@ -36,9 +41,9 @@ def cmd(host: str | None = None) -> None:
         table.add_column(name, no_wrap=True)
 
     for m in models:
-        mname = m["name"].split(":")
-        name = mname[0]
-        slug = mname[1]
+        parts = m["name"].split(":", 1)
+        name = parts[0] if len(parts) > 0 else m["name"]
+        slug = parts[1] if len(parts) > 1 else "latest"
 
         expires_at = f'{fmt_date(m["expires_at"])}'
 

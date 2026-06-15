@@ -17,4 +17,5 @@ def cmd(model: str, host: str | None = None) -> None:
     """Download a model"""
     cfg = config.load()
     host = host or cfg["host"]
+    logger.debug("pull %s from %s", model, host)
     stream_operation("/api/pull", model, host, cfg["timeout"], verb="pulling")

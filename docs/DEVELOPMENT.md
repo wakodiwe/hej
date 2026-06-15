@@ -19,7 +19,7 @@ src/hej/           # Package source
   log.py           # Logging setup
   utils.py         # Date/size formatting
   progress.py      # Rich progress bars
-  commands/        # 15 CLI subcommands
+  commands/        # 18 CLI subcommands
 tests/             # Test suite
 docs/api/          # pdoc-generated API docs
 ```

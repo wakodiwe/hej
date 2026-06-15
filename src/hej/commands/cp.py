@@ -21,6 +21,8 @@ def cmd(source: str, destination: str, host: str | None = None) -> None:
     cfg = config.load()
     host = host or cfg["host"]
 
+    logger.debug("cp %s -> %s", source, destination)
+
     try:
         resp = requests.post(
             f"{host}/api/copy",

@@ -20,6 +20,8 @@ def cmd(model: str, host: str | None = None) -> None:
     cfg = config.load()
     host = host or cfg["host"]
 
+    logger.debug("stop %s", model)
+
     try:
         resp = requests.post(
             f"{host}/api/generate",

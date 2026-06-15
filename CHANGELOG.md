@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.2.0 (2026-06-15)
+
+- Batch: `hej batch --input --output --concurrency` for bulk prompt evaluation
+- Compare: `hej compare -m a -m b "prompt"` for side-by-side model response comparison
+- Bench: `hej bench -m model --runs 5 -p prompt` for performance benchmarks with CSV output
+- Fixed bugs:
+- batch/compare: unpack generate() tuple properly
+- ps: safe colon split for model names without tag
+- conftest: add missing HEJ_* env vars to cleanup
+- bench/batch/compare: replace __import__ hack with proper import
+- show: remove -v short option to avoid shadowing root
+- ps: add missing logger definition
+- Add debug logs to stop/pull/push/create/ps/bench/batch/compare
+- chat: remove dead return after api_error
+- Add missing json import to batch
+- Fix test mocks to return (str, dict) tuples matching generate() signature
+
 ## 1.1.0 (2026-06-15)
 
 - Templates: `hej template create/list/show/delete`, reusable prompt patterns with `{input}` placeholder

@@ -27,6 +27,9 @@ def register_commands(cli: click.Group) -> None:
         "show",
         "status",
         "stop",
+        "batch",
+        "bench",
+        "compare",
         "session",
         "template",
     ]:

@@ -17,4 +17,5 @@ def cmd(model: str, host: str | None = None) -> None:
     """Upload a model"""
     cfg = config.load()
     host = host or cfg["host"]
+    logger.debug("push %s to %s", model, host)
     stream_operation("/api/push", model, host, cfg["timeout"], verb="pushing")

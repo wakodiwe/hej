@@ -86,7 +86,7 @@ def simple_report(params: dict) -> None:
 @click.command("show", context_settings=CONTEXT_SETTINGS)
 @click.argument("model")
 @click.option("--host", help="Ollama server URL")
-@click.option("-v", "--verbose", is_flag=True, help="Include full model info from API")
+@click.option("--verbose", is_flag=True, help="Include full model info from API")
 @click.option("--json", "json_output", is_flag=True, help="Output raw JSON")
 @click.option("--jsonc", "json_compact", is_flag=True, help="Output compact raw JSON")
 @click.option("--full", "full", is_flag=True, help="Show full formatted report")

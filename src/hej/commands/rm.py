@@ -21,6 +21,8 @@ def cmd(model: str, force: bool = False, host: str | None = None) -> None:
     cfg = config.load()
     host = host or cfg["host"]
 
+    logger.debug("rm %s force=%s", model, force)
+
     if not force:
         click.confirm(f"Delete {model}?", abort=True)
 

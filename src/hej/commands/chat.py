@@ -68,7 +68,6 @@ def chat_single(
         return content, metadata
     except (requests.ConnectionError, requests.Timeout, requests.HTTPError) as e:
         api_error(e, host)
-        return "", {}
 
 
 @click.command("chat", context_settings=CONTEXT_SETTINGS)
