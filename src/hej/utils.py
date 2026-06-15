@@ -4,31 +4,16 @@ from __future__ import annotations
 
 from datetime import datetime
 
-DATE_FORMAT = "%d.%m.%y"
-TIME_FORMAT = "%I:%M"
-FORMAT_DATETIME = "datetime"
-FORMAT_DATE = "date"
-FORMAT_TIME = "time"
 
-
-def fmt_date(s: str, format_type: str = FORMAT_DATETIME) -> str:
-    """Parse an ISO-8601 datetime string and return a formatted string.
-
-    Args:
-        s: ISO-8601 datetime string to format.
-        format_type: Format type — ``"datetime"``, ``"date"``, or ``"time"``.
-
-    Returns:
-        Formatted date/time string, or empty string for unknown *format_type*.
-    """
+def fmt_date(s: str, format_type: str = "datetime") -> str:
     dt = datetime.fromisoformat(s)
-    _date = dt.strftime(DATE_FORMAT)
-    _time = dt.strftime(TIME_FORMAT)
-    if FORMAT_DATETIME == format_type:
+    _date = dt.strftime("%d.%m.%y")
+    _time = dt.strftime("%I:%M")
+    if format_type == "datetime":
         return f"{_date}, {_time}"
-    if FORMAT_DATE == format_type:
+    if format_type == "date":
         return _date
-    if FORMAT_TIME == format_type:
+    if format_type == "time":
         return _time
     return ""
 

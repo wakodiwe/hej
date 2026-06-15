@@ -12,18 +12,6 @@ from hej.config import (
 
 
 class TestParseDuration:
-    def test_seconds(self):
-        assert _parse_duration("30s") == 30
-
-    def test_minutes(self):
-        assert _parse_duration("5m") == 300
-
-    def test_hours(self):
-        assert _parse_duration("1h") == 3600
-
-    def test_complex(self):
-        assert _parse_duration("2m30s") == 150
-
     def test_plain_integer(self):
         assert _parse_duration("120") == 120
 
@@ -108,12 +96,6 @@ class TestLoad:
         with patch.dict("os.environ", {"OLLAMA_LOAD_TIMEOUT": "120"}):
             result = load()
         assert result["timeout"] == 120
-
-    @patch("hej.config._find_config", return_value=None)
-    def test_env_var_timeout_duration(self, mock_find):
-        with patch.dict("os.environ", {"OLLAMA_LOAD_TIMEOUT": "5m"}):
-            result = load()
-        assert result["timeout"] == 300
 
     @patch("hej.config._find_config", return_value=None)
     def test_invalid_env_var_timeout_ignored(self, mock_find):

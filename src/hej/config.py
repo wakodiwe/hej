@@ -46,29 +46,11 @@ def _resolve_host(val: str) -> str:
     return val
 
 
-_DURATION_UNITS = {"s": 1, "m": 60, "h": 3600}
-
-
 def _parse_duration(val: str) -> int | None:
-    """Parse a duration string (e.g. ``5m``, ``2m0s``, ``1h``) into seconds.
-
-    Returns:
-        Integer seconds, or ``None`` if the string cannot be parsed.
-    """
-    import re
-
-    total = 0
-    for match in re.finditer(r"(\d+)([smh])", val):
-        try:
-            total += int(match.group(1)) * _DURATION_UNITS[match.group(2)]
-        except (ValueError, KeyError):
-            return None
-    if total == 0:
-        try:
-            return int(val)
-        except ValueError:
-            return None
-    return total
+    try:
+        return int(val)
+    except ValueError:
+        return None
 
 
 def _find_config() -> Path | None:
