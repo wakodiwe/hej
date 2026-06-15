@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 (2026-06-15)
+## 1.0.0 (2026-06-15)
 
 - Error handling: replaced bare `except Exception:` with specific types in API client
 - Validation: datetime parsing in `fmt_date()` now returns empty string on invalid input

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hej"
-version = "0.1.0"
+version = "1.0.0"
 description = "hej"
 requires-python = ">=3.11"
 dependencies = ["click>=8.0,<9", "requests>=2.31,<3", "rich>=13,<14", "prompt-toolkit>=3.0,<4"]

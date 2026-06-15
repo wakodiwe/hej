@@ -61,5 +61,5 @@ make docs               # regenerate API docs
 
 1. Update version in `pyproject.toml`
 2. Update `CHANGELOG.md`
-3. Commit and tag: `git tag v0.1.0`
+3. Commit and tag: `git tag v1.0.0`
 4. Push: `git push origin main --tags`
