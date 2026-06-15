@@ -22,8 +22,21 @@ class TestFmtDate:
         result = fmt_date("2024-01-15T10:30:00", format_type="invalid")
         assert result == ""
 
+    def test_invalid_date_string(self):
+        result = fmt_date("not-a-date")
+        assert result == ""
+
+    def test_invalid_date_string_logs(self, caplog):
+        import logging
+        caplog.set_level(logging.WARNING)
+        fmt_date("garbage")
+        assert "invalid date string" in caplog.text
+
 
 class TestFmtSize:
+    def test_zero(self):
+        assert fmt_size(0) == "0.0B"
+
     def test_bytes(self):
         assert fmt_size(500) == "500.0B"
 

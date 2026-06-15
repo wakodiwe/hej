@@ -7,6 +7,7 @@ from hej.config import (
     _find_config,
     _parse_duration,
     _resolve_host,
+    _validate,
     load,
 )
 
@@ -34,6 +35,33 @@ class TestResolveHost:
 
     def test_empty_string(self):
         assert _resolve_host("") == ""
+
+    def test_strips_trailing_slash(self):
+        assert _resolve_host("http://foo:11434/") == "http://foo:11434"
+
+    def test_raises_on_spaces(self):
+        import pytest
+        with pytest.raises(ValueError, match="Invalid host"):
+            _resolve_host("bad host:11434")
+
+
+class TestValidate:
+    def test_passes_good_config(self):
+        cfg = DEFAULTS.copy()
+        result = _validate(cfg)
+        assert result == cfg
+
+    def test_resets_bad_timeout(self):
+        cfg = DEFAULTS.copy()
+        cfg["timeout"] = 0
+        result = _validate(cfg)
+        assert result["timeout"] == DEFAULTS["timeout"]
+
+    def test_resets_empty_host(self):
+        cfg = DEFAULTS.copy()
+        cfg["host"] = ""
+        result = _validate(cfg)
+        assert result["host"] == DEFAULTS["host"]
 
 
 class TestFindConfig:
@@ -78,6 +106,14 @@ class TestLoad:
         assert result["host"] == "http://localhost:11434"
 
     @patch("hej.config._find_config")
+    def test_config_bad_timeout_resets_to_default(self, mock_find):
+        mock_find.return_value.exists.return_value = True
+        toml_data = b"timeout = -5"
+        with patch("builtins.open", mock_open(read_data=toml_data)):
+            result = load()
+        assert result["timeout"] == DEFAULTS["timeout"]
+
+    @patch("hej.config._find_config")
     def test_malformed_toml_returns_defaults(self, mock_find):
         mock_find.return_value.exists.return_value = True
         toml_data = b"this is not valid toml ====="
@@ -90,6 +126,12 @@ class TestLoad:
         with patch.dict("os.environ", {"OLLAMA_HOST": "0.0.0.0:11434"}):
             result = load()
         assert result["host"] == "http://0.0.0.0:11434"
+
+    @patch("hej.config._find_config", return_value=None)
+    def test_env_var_host_bad_url_ignored(self, mock_find):
+        with patch.dict("os.environ", {"OLLAMA_HOST": "bad host"}):
+            result = load()
+        assert result["host"] == DEFAULTS["host"]
 
     @patch("hej.config._find_config", return_value=None)
     def test_env_var_timeout_seconds(self, mock_find):

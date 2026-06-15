@@ -6,7 +6,9 @@ Public API:
 
 from __future__ import annotations
 
+import json
 import logging
+from collections.abc import Callable
 
 _RESET = "\033[0m"
 _COLORS = {
@@ -31,21 +33,44 @@ class _ColorFormatter(logging.Formatter):
         return super().format(record)
 
 
-def setup(verbosity: int = 0, quiet: bool = False, color: bool = True) -> None:
+class _JsonFormatter(logging.Formatter):
+    """JSON log formatter — emits one JSON object per line."""
+
+    def format(self, record: logging.LogRecord) -> str:
+        return json.dumps(
+            {
+                "time": self.formatTime(record),
+                "level": record.levelname,
+                "name": record.name,
+                "message": record.getMessage(),
+            }
+        )
+
+
+def setup(
+    verbosity: int = 0,
+    quiet: bool = False,
+    color: bool = True,
+    json_output: bool = False,
+) -> None:
     """Configure the root logger. Safe to call multiple times.
 
     Args:
         verbosity: Number of ``-v`` flags (0=WARNING, 1=INFO, 2=DEBUG).
         quiet: If True, only show ERROR level messages.
         color: If True, use ANSI colour codes for log levels.
+        json_output: If True, emit JSON-formatted log lines.
     """
     if quiet:
         level = "ERROR"
     else:
         level = _LEVELS[min(verbosity, len(_LEVELS) - 1)]
 
-    handler = logging.StreamHandler()
-    if color:
+    handler: logging.Handler = logging.StreamHandler()
+    formatter: Callable[[logging.LogRecord], str]
+    if json_output:
+        handler.setFormatter(_JsonFormatter("%(message)s"))
+    elif color:
         handler.setFormatter(_ColorFormatter("%(levelname)s %(message)s"))
     else:
         handler.setFormatter(logging.Formatter("%(levelname)s %(message)s"))

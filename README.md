@@ -1,5 +1,10 @@
 # hej
 
+A lightweight CLI for interacting with [ollama](https://ollama.ai).
+
+![Python](https://img.shields.io/badge/python-3.11+-blue)
+![License](https://img.shields.io/badge/license-Unlicense-green)
+
 ```
 ┌────────────────────────────────┐
 │  Calvin:  "I made a program!"  │
@@ -11,11 +16,6 @@
 │  Calvin:  "Exactly."           │
 └────────────────────────────────┘
 ```
-
-![Python](https://img.shields.io/badge/python-3.11+-blue)
-![License](https://img.shields.io/badge/license-Unlicense-green)
-
-A lightweight CLI for interacting with [ollama](https://ollama.ai).
 
 ## Overview
 
@@ -84,6 +84,15 @@ All keys are optional. Precedence (highest to lowest):
 | `streaming`      | `false`                  | `HEJ_STREAMING`       |
 | `stats`          | `true`                   | `HEJ_STATS`           |
 | `keep_alive`     | `-`                      | `OLLAMA_KEEP_ALIVE`   |
+
+Invalid config values (e.g. malformed TOML, negative timeout, empty host) log a warning and fall back to the hard-coded default.
+
+Structured JSON logging is available via the `--json-logs` flag to `hej`:
+
+```
+hej --json-logs run "hello"
+# → {"time": "...", "level": "WARNING", "name": "hej.config", "message": "..."}
+```
 
 ## Usage
 

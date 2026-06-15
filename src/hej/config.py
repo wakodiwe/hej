@@ -41,9 +41,21 @@ CONFIG_PATH = CONFIG_DIR / "config.toml"
 
 
 def _resolve_host(val: str) -> str:
-    """Prepend ``http://`` to *val* if no scheme is present."""
-    if val and not val.startswith(("http://", "https://")):
-        return f"http://{val}"
+    """Prepend ``http://`` to *val* if no scheme is present.
+
+    Strips trailing slashes and validates the result is a well-formed
+    URL with a hostname.  Returns the validated URL or raises
+    ``ValueError`` if the input is clearly invalid.
+    """
+    if not val:
+        return val
+    val = val.rstrip("/")
+    if not val.startswith(("http://", "https://")):
+        val = f"http://{val}"
+    parts = val.partition("://")
+    host_part = parts[2] if parts[0] in ("http", "https") else parts[0]
+    if not host_part or " " in host_part:
+        raise ValueError(f"Invalid host URL: {val}")
     return val
 
 
@@ -58,6 +70,17 @@ def _parse_duration(val: str) -> int | None:
 def _find_config() -> Path | None:
     """Return the config file path if it exists, or ``None``."""
     return CONFIG_PATH if CONFIG_PATH.exists() else None
+
+
+def _validate(cfg: dict[str, Any]) -> dict[str, Any]:
+    """Validate and coerce config values, logging warnings for bad entries."""
+    if not isinstance(cfg.get("timeout"), (int, float)) or cfg["timeout"] <= 0:
+        logger.warning("Invalid timeout %r, resetting to default %s", cfg.get("timeout"), DEFAULTS["timeout"])
+        cfg["timeout"] = DEFAULTS["timeout"]
+    if not isinstance(cfg.get("host"), str) or not cfg["host"]:
+        logger.warning("Invalid host %r, resetting to default %s", cfg.get("host"), DEFAULTS["host"])
+        cfg["host"] = DEFAULTS["host"]
+    return cfg
 
 
 def load() -> dict[str, Any]:
@@ -81,7 +104,10 @@ def load() -> dict[str, Any]:
         if val is None:
             continue
         if key == "host":
-            config[key] = _resolve_host(val)
+            try:
+                config[key] = _resolve_host(val)
+            except ValueError:
+                logger.warning("Invalid %s value %r, ignoring", env_var, val)
         elif key == "timeout":
             parsed = _parse_duration(val)
             if parsed is not None:
@@ -93,4 +119,4 @@ def load() -> dict[str, Any]:
         else:
             config[key] = val
 
-    return config
+    return _validate(config)

@@ -1,4 +1,18 @@
-"""run command"""
+"""Execute a single prompt against an Ollama model.
+
+Dispatches to either streaming or single-response mode based on
+config/CLI flags.  Handles server health check, model wake-up
+indicator, and timing stats display.
+
+Examples:
+    hej run "hello world"
+    hej run -m llama3 "explain quantum physics"
+    hej run --stream "write a poem"
+    hej run --no-stats "quick question"
+
+Raises:
+    SystemExit: If the Ollama server is not reachable.
+"""
 
 import logging
 
