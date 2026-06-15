@@ -7,7 +7,7 @@ name = "hej"
 version = "0.1.0"
 description = "hej"
 requires-python = ">=3.11"
-dependencies = ["click>=8.0", "requests>=2.31", "rich>=13"]
+dependencies = ["click>=8.0", "requests>=2.31", "rich>=13", "prompt-toolkit"]
 
 [project.optional-dependencies]
 tests = ["pytest", "responses", "pytest-cov", "black"]

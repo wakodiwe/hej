@@ -11,7 +11,7 @@ import requests
 
 from hej import CONTEXT_SETTINGS, config
 from hej.api import api_error, extract_metadata, print_stats
-from hej.progress import loading
+from hej.progress import wake_progress
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +103,9 @@ def cmd(host, model, stream, stats, timeout, reset):
 
     while True:
         try:
-            user_input = input("\n> ")
+            from prompt_toolkit import prompt
+            user_input = prompt("\n> ", vi_mode=True)
+            # user_input = input("\n> ")
         except EOFError:
             break
 
@@ -124,7 +126,7 @@ def cmd(host, model, stream, stats, timeout, reset):
             click.echo("")
             response = ""
             metadata = {}
-            with loading(f"Loading model {model} ..."):
+            with wake_progress(model):
                 for item in chat_stream(model, messages, host, timeout):
                     if isinstance(item, tuple) and item[0] == "stats":
                         metadata = item[1]
@@ -135,7 +137,7 @@ def cmd(host, model, stream, stats, timeout, reset):
             if stats:
                 print_stats(metadata)
         else:
-            with loading("Generating response"):
+            with wake_progress(model):
                 response, metadata = chat_single(model, messages, host, timeout)
             click.echo(response)
             if stats:

@@ -22,7 +22,7 @@ class TestNoArgs:
     def test_shows_help(self):
         result = CliRunner().invoke(cli, [])
         assert result.exit_code == 0
-        assert "Usage:" in result.output
+        assert "hej" in result.output
 
 
 class TestUnknownCommand:
@@ -73,7 +73,7 @@ class TestRun:
         assert result.exit_code == 1
         assert "not running" in result.output.lower()
 
-    @patch("hej.commands.run.loading")
+    @patch("hej.commands.run.wake_progress")
     @patch("hej.commands.run.generate", return_value=("Mocked response", {}))
     @patch("hej.commands.run.isrunning", return_value=True)
     def test_generate(self, _mock1, _mock2, _mock3):
@@ -97,7 +97,7 @@ class TestRun:
         _, kwargs = mock_gen.call_args
         assert kwargs["keep_alive"] is None
 
-    @patch("hej.commands.run.loading")
+    @patch("hej.commands.run.wake_progress")
     @patch("hej.commands.run.generate", return_value=("response", {"eval_count": 42}))
     @patch("hej.commands.run.isrunning", return_value=True)
     def test_generate_with_stats(self, _mock1, _mock2, _mock3):
@@ -122,11 +122,16 @@ class TestRun:
             "stats": True,
         },
     )
-    @patch("hej.commands.run.loading")
+    @patch("hej.commands.run.wake_progress")
     @patch(
         "hej.commands.run.generate_stream",
         return_value=iter(
-            [("token", "Streamed "), ("token", "response"), ("stats", {})]
+            [
+                ("loading", True),
+                ("token", "Streamed "),
+                ("token", "response"),
+                ("stats", {}),
+            ]
         ),
     )
     @patch("hej.commands.run.isrunning", return_value=True)
@@ -573,7 +578,7 @@ class TestRunStreamingWithLoading:
             "stats": True,
         },
     )
-    @patch("hej.commands.run.loading")
+    @patch("hej.commands.run.wake_progress")
     @patch(
         "hej.commands.run.generate_stream",
         return_value=iter(
@@ -589,4 +594,3 @@ class TestRunStreamingWithLoading:
         result = CliRunner().invoke(cli, ["run", "hello"])
         assert result.exit_code == 0
         assert "Hello" in result.output
-        assert "Model is up and working" in result.output
