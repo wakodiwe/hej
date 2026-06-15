@@ -5,7 +5,7 @@ import sys
 
 import click
 
-from . import CONTEXT_SETTINGS, VERSION, log
+from . import CONTEXT_SETTINGS, log
 from .commands import register_commands
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
     "-v", "--verbose", count=True, help="Increase verbosity (-v info, -vv debug)"
 )
 @click.option("--no-color", is_flag=True, default=False, help="Disable coloured output")
-@click.version_option(message="%(version)s", version=VERSION)
+@click.version_option(message="%(version)s", package_name="hej")
 @click.pass_context
 def cli(ctx: click.Context, verbose: int, quiet: bool, no_color: bool) -> None:
     """hej — A lightweight CLI for sending prompts to Ollama."""

@@ -107,13 +107,13 @@ def load() -> dict[str, Any]:
             try:
                 config[key] = _resolve_host(val)
             except ValueError:
-                logger.warning("Invalid %s value %r, ignoring", env_var, val)
+                logger.debug("Invalid %s value %r, ignoring", env_var, val)
         elif key == "timeout":
             parsed = _parse_duration(val)
             if parsed is not None:
                 config[key] = parsed
             else:
-                logger.warning("Invalid %s value %r, ignoring", env_var, val)
+                logger.debug("Invalid %s value %r, ignoring", env_var, val)
         elif key in ("streaming", "stats"):
             config[key] = val.lower() in ("1", "true", "yes")
         else:

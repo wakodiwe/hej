@@ -3,7 +3,6 @@
 import logging
 
 import click
-import requests
 
 from hej import CONTEXT_SETTINGS, config
 from hej.api import api_error
@@ -16,6 +15,8 @@ logger = logging.getLogger(__name__)
 @click.option("--host", help="Ollama server URL")
 def cmd(model: str, host: str | None = None) -> None:
     """Stop a running model"""
+    import requests
+
     cfg = config.load()
     host = host or cfg["host"]
 

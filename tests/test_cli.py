@@ -142,7 +142,7 @@ class TestRun:
 
 
 class TestLs:
-    @patch("hej.commands.ls.requests.get")
+    @patch("requests.get")
     def test_ls(self, mock_get):
         mock_get.return_value.json.return_value = {
             "models": [
@@ -159,7 +159,7 @@ class TestLs:
         assert result.exit_code == 0
         assert "phi3" in result.output
 
-    @patch("hej.commands.ls.requests.get")
+    @patch("requests.get")
     def test_ls_empty(self, mock_get):
         mock_get.return_value.json.return_value = {"models": []}
         result = CliRunner().invoke(cli, ["ls"])
@@ -173,7 +173,7 @@ class TestLs:
 
 
 class TestPs:
-    @patch("hej.commands.ps.requests.get")
+    @patch("requests.get")
     def test_ps(self, mock_get):
         mock_get.return_value.json.return_value = {
             "models": [
@@ -192,14 +192,14 @@ class TestPs:
         assert result.exit_code == 0
         assert "llama3.2" in result.output
 
-    @patch("hej.commands.ps.requests.get")
+    @patch("requests.get")
     def test_ps_empty(self, mock_get):
         mock_get.return_value.json.return_value = {"models": []}
         result = CliRunner().invoke(cli, ["ps"])
         assert result.exit_code == 0
         assert "No models in memory" in result.output
 
-    @patch("hej.commands.ps.requests.get")
+    @patch("requests.get")
     def test_ps_today(self, mock_get):
         from datetime import datetime
 
@@ -227,7 +227,7 @@ class TestPs:
 
 
 class TestShow:
-    @patch("hej.commands.show.requests.post")
+    @patch("requests.post")
     def test_show(self, mock_post):
         mock_post.return_value.json.return_value = {
             "details": {
@@ -248,7 +248,7 @@ class TestShow:
         assert "architecture" in result.output
         assert "llama" in result.output
 
-    @patch("hej.commands.show.requests.post")
+    @patch("requests.post")
     def test_show_minimal(self, mock_post):
         mock_post.return_value.json.return_value = {
             "details": {},
@@ -261,7 +261,7 @@ class TestShow:
         assert result.exit_code == 0
         assert "unknown" in result.output
 
-    @patch("hej.commands.show.requests.post")
+    @patch("requests.post")
     def test_show_full(self, mock_post):
         mock_post.return_value.json.return_value = {
             "details": {
@@ -280,7 +280,7 @@ class TestShow:
         result = CliRunner().invoke(cli, ["show", "phi3", "--full"])
         assert result.exit_code == 0
 
-    @patch("hej.commands.show.requests.post")
+    @patch("requests.post")
     def test_show_full_with_stop_and_tensors(self, mock_post):
         mock_post.return_value.json.return_value = {
             "details": {
@@ -316,7 +316,7 @@ class TestShow:
         assert "{{ .Prompt }}" in result.output
         assert 'stop "<|endoftext|>"' in result.output
 
-    @patch("hej.commands.show.requests.post")
+    @patch("requests.post")
     def test_show_parameters_flag(self, mock_post):
         mock_post.return_value.json.return_value = {
             "parameters": 'stop "<|endoftext|>"',
@@ -324,26 +324,26 @@ class TestShow:
         result = CliRunner().invoke(cli, ["show", "phi3", "--parameters"])
         assert result.exit_code == 0
 
-    @patch("hej.commands.show.requests.post", side_effect=requests.ConnectionError)
+    @patch("requests.post", side_effect=requests.ConnectionError)
     def test_show_connection_error(self, mock_post):
         result = CliRunner().invoke(cli, ["show", "phi3"])
         assert result.exit_code != 0
 
-    @patch("hej.commands.show.requests.post")
+    @patch("requests.post")
     def test_show_json(self, mock_post):
         mock_post.return_value.json.return_value = {"key": "value"}
         result = CliRunner().invoke(cli, ["show", "phi3", "--json"])
         assert result.exit_code == 0
         assert '"key": "value"' in result.output
 
-    @patch("hej.commands.show.requests.post")
+    @patch("requests.post")
     def test_show_jsonc(self, mock_post):
         mock_post.return_value.json.return_value = {"key": "value"}
         result = CliRunner().invoke(cli, ["show", "phi3", "--jsonc"])
         assert result.exit_code == 0
         assert result.output.rstrip("\n") == '{"key":"value"}'
 
-    @patch("hej.commands.show.requests.post")
+    @patch("requests.post")
     def test_show_segment_modelfile(self, mock_post):
         mock_post.return_value.json.return_value = {
             "modelfile": "FROM phi3\nSYSTEM hello"
@@ -352,21 +352,21 @@ class TestShow:
         assert result.exit_code == 0
         assert "FROM phi3" in result.output
 
-    @patch("hej.commands.show.requests.post")
+    @patch("requests.post")
     def test_show_segment_template(self, mock_post):
         mock_post.return_value.json.return_value = {"template": "{{ .Prompt }}"}
         result = CliRunner().invoke(cli, ["show", "phi3", "--template"])
         assert result.exit_code == 0
         assert "{{ .Prompt }}" in result.output
 
-    @patch("hej.commands.show.requests.post")
+    @patch("requests.post")
     def test_show_segment_license(self, mock_post):
         mock_post.return_value.json.return_value = {"license": "MIT"}
         result = CliRunner().invoke(cli, ["show", "phi3", "--license"])
         assert result.exit_code == 0
         assert "MIT" in result.output
 
-    @patch("hej.commands.show.requests.post")
+    @patch("requests.post")
     def test_show_segment_parameters(self, mock_post):
         mock_post.return_value.json.return_value = {
             "parameters": 'stop "<|endoftext|>"'
@@ -385,7 +385,7 @@ class TestShow:
 
 
 class TestPull:
-    @patch("hej.progress.requests.post")
+    @patch("requests.post")
     def test_pull_progress(self, mock_post):
         lines = [
             b'{"status":"pulling manifest"}',
@@ -411,7 +411,7 @@ class TestPull:
 
 
 class TestPush:
-    @patch("hej.progress.requests.post")
+    @patch("requests.post")
     def test_push_progress(self, mock_post):
         lines = [
             b'{"status":"pushing manifest"}',
@@ -435,7 +435,7 @@ class TestPush:
 
 
 class TestCreate:
-    @patch("hej.progress.requests.post")
+    @patch("requests.post")
     def test_create(self, mock_post):
         lines = [
             b'{"status":"creating model"}',
@@ -450,7 +450,7 @@ class TestCreate:
         assert "creating model" in result.output
         assert "success" in result.output
 
-    @patch("hej.progress.requests.post")
+    @patch("requests.post")
     def test_create_all_options(self, mock_post):
         lines = [b'{"status":"success"}']
         mock_resp = mock_post.return_value.__enter__.return_value
@@ -481,7 +481,7 @@ class TestCreate:
 
 
 class TestCp:
-    @patch("hej.commands.cp.requests.post")
+    @patch("requests.post")
     def test_cp(self, mock_post):
         mock_post.return_value.raise_for_status.return_value = None
 
@@ -497,7 +497,7 @@ class TestCp:
 
 
 class TestRm:
-    @patch("hej.commands.rm.requests.delete")
+    @patch("requests.delete")
     def test_rm_force(self, mock_delete):
         mock_delete.return_value.raise_for_status.return_value = None
 
@@ -505,7 +505,7 @@ class TestRm:
         assert result.exit_code == 0
         assert "Deleted phi3" in result.output
 
-    @patch("hej.commands.rm.requests.delete")
+    @patch("requests.delete")
     def test_rm_confirm_yes(self, mock_delete):
         mock_delete.return_value.raise_for_status.return_value = None
 
@@ -513,7 +513,7 @@ class TestRm:
         assert result.exit_code == 0
         assert "Deleted phi3" in result.output
 
-    @patch("hej.commands.rm.requests.delete")
+    @patch("requests.delete")
     def test_rm_confirm_no(self, mock_delete):
         result = CliRunner().invoke(cli, ["rm", "phi3"], input="n\n")
         assert result.exit_code != 0
@@ -525,7 +525,7 @@ class TestRm:
 
 
 class TestStop:
-    @patch("hej.commands.stop.requests.post")
+    @patch("requests.post")
     def test_stop(self, mock_post):
         mock_post.return_value.raise_for_status.return_value = None
 
@@ -540,27 +540,27 @@ class TestStop:
 
 
 class TestErrorPaths:
-    @patch("hej.commands.cp.requests.post", side_effect=requests.ConnectionError)
+    @patch("requests.post", side_effect=requests.ConnectionError)
     def test_cp_connection_error(self, _mock):
         result = CliRunner().invoke(cli, ["cp", "a", "b"])
         assert result.exit_code != 0
 
-    @patch("hej.commands.rm.requests.delete", side_effect=requests.ConnectionError)
+    @patch("requests.delete", side_effect=requests.ConnectionError)
     def test_rm_connection_error(self, _mock):
         result = CliRunner().invoke(cli, ["rm", "phi3", "--force"])
         assert result.exit_code != 0
 
-    @patch("hej.commands.stop.requests.post", side_effect=requests.ConnectionError)
+    @patch("requests.post", side_effect=requests.ConnectionError)
     def test_stop_connection_error(self, _mock):
         result = CliRunner().invoke(cli, ["stop", "phi3"])
         assert result.exit_code != 0
 
-    @patch("hej.commands.ls.requests.get", side_effect=requests.ConnectionError)
+    @patch("requests.get", side_effect=requests.ConnectionError)
     def test_ls_connection_error(self, _mock):
         result = CliRunner().invoke(cli, ["ls"])
         assert result.exit_code != 0
 
-    @patch("hej.commands.ps.requests.get", side_effect=requests.ConnectionError)
+    @patch("requests.get", side_effect=requests.ConnectionError)
     def test_ps_connection_error(self, _mock):
         result = CliRunner().invoke(cli, ["ps"])
         assert result.exit_code != 0

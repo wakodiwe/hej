@@ -7,7 +7,6 @@ import logging
 from typing import Iterator
 
 import click
-import requests
 
 from hej import CONTEXT_SETTINGS, config
 from hej.api import api_error, extract_metadata, print_stats
@@ -22,6 +21,8 @@ def chat_stream(
     model: str, messages: list[dict[str, str]], host: str, timeout: int
 ) -> Iterator[str | tuple[str, dict]]:
     """Yield tokens from the chat API, streaming, return full response."""
+    import requests
+
     payload: dict = {"model": model, "messages": messages, "stream": True}
     full_response = []
 
@@ -54,6 +55,8 @@ def chat_single(
     model: str, messages: list[dict[str, str]], host: str, timeout: int
 ) -> tuple[str, dict]:
     """Send chat request without streaming, return (content, metadata)."""
+    import requests
+
     payload: dict = {"model": model, "messages": messages, "stream": False}
     try:
         resp = requests.post(f"{host}{CHAT_API}", json=payload, timeout=timeout)

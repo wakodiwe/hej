@@ -15,16 +15,16 @@ from hej.api import (
 
 
 class TestIsRunning:
-    @patch("hej.api.requests.get")
+    @patch("requests.get")
     def test_running(self, mock_get):
         mock_get.return_value.raise_for_status.return_value = None
         assert isrunning("http://localhost:11434") is True
 
-    @patch("hej.api.requests.get", side_effect=requests.ConnectionError)
+    @patch("requests.get", side_effect=requests.ConnectionError)
     def test_not_running(self, mock_get):
         assert isrunning("http://localhost:11434") is False
 
-    @patch("hej.api.requests.get", side_effect=requests.exceptions.InvalidURL)
+    @patch("requests.get", side_effect=requests.exceptions.InvalidURL)
     def test_invalid_url(self, mock_get):
         assert isrunning("http://bad") is False
 
@@ -64,7 +64,7 @@ class TestPrintStats:
 
 
 class TestGenerate:
-    @patch("hej.api.requests.post")
+    @patch("requests.post")
     def test_generate_success(self, mock_post):
         mock_post.return_value.json.return_value = {
             "response": "Hello!",
@@ -74,12 +74,12 @@ class TestGenerate:
         text, meta = generate("phi3", "hi", "http://localhost:11434", 600)
         assert text == "Hello!"
 
-    @patch("hej.api.requests.post", side_effect=requests.ConnectionError)
+    @patch("requests.post", side_effect=requests.ConnectionError)
     def test_generate_connection_error(self, mock_post):
         with pytest.raises(SystemExit):
             generate("phi3", "hi", "http://localhost:11434", 600)
 
-    @patch("hej.api.requests.post")
+    @patch("requests.post")
     def test_generate_with_keep_alive(self, mock_post):
         mock_post.return_value.json.return_value = {
             "response": "ok",
@@ -93,7 +93,7 @@ class TestGenerate:
 
 
 class TestGenerateStream:
-    @patch("hej.api.requests.post")
+    @patch("requests.post")
     def test_stream_success(self, mock_post):
         lines = [
             b'{"response":"Hello","done":false}',
@@ -111,12 +111,12 @@ class TestGenerateStream:
         assert any(t[0] == "stats" for t in results)
         assert any(t[0] == "loading" for t in results)
 
-    @patch("hej.api.requests.post", side_effect=requests.ConnectionError)
+    @patch("requests.post", side_effect=requests.ConnectionError)
     def test_stream_connection_error(self, mock_post):
         with pytest.raises(SystemExit):
             list(generate_stream("phi3", "hi", "http://localhost:11434", 600))
 
-    @patch("hej.api.requests.post")
+    @patch("requests.post")
     def test_stream_with_keep_alive(self, mock_post):
         lines = [
             b'{"response":"ok","done":true,"total_duration":0,'
@@ -135,7 +135,7 @@ class TestGenerateStream:
         call_kwargs = mock_post.call_args[1]
         assert call_kwargs["json"]["keep_alive"] == "10m"
 
-    @patch("hej.api.requests.post")
+    @patch("requests.post")
     def test_stream_with_empty_lines(self, mock_post):
         lines = [
             b"",
@@ -150,7 +150,7 @@ class TestGenerateStream:
         tokens = [t for t in results if t[0] == "token"]
         assert len(tokens) == 1
 
-    @patch("hej.api.requests.post")
+    @patch("requests.post")
     def test_stream_skips_malformed(self, mock_post):
         lines = [
             b"not json",

@@ -5,9 +5,6 @@ import logging
 import json
 
 import click
-import requests
-
-from rich.console import Console
 
 from hej import CONTEXT_SETTINGS, config
 from hej.api import api_error
@@ -29,11 +26,15 @@ def _get_stop_params(param_str: str) -> list[str]:
 
 def _print_raw(content: str) -> None:
     """Print raw content stripped of leading/trailing whitespace."""
+    from rich.console import Console
+
     Console().print(content.strip())
 
 
 def _print_parameters(param_str: str) -> None:
     """Print inference parameters."""
+    from rich.console import Console
+
     stop_params = _get_stop_params(param_str)
     if stop_params:
         Console().print("\n".join(f"stop {s}" for s in stop_params))
@@ -107,6 +108,8 @@ def cmd(
     parameters: bool = False,
 ) -> None:
     """Show information for a MODEL"""
+
+    import requests
 
     logger.debug("show.cmd(%r)", model)
     cfg = config.load()

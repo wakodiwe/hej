@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import click
+import importlib
 
-from . import chat, config, cp, create, ls, ps, pull, push, rm, run, show, status, stop
+import click
 
 
 def register_commands(cli: click.Group) -> None:
@@ -13,16 +13,9 @@ def register_commands(cli: click.Group) -> None:
     Args:
         cli: The root Click group.
     """
-    cli.add_command(chat.cmd)
-    cli.add_command(config.cmd)
-    cli.add_command(cp.cmd)
-    cli.add_command(create.cmd)
-    cli.add_command(ls.cmd)
-    cli.add_command(ps.cmd)
-    cli.add_command(pull.cmd)
-    cli.add_command(push.cmd)
-    cli.add_command(rm.cmd)
-    cli.add_command(run.cmd)
-    cli.add_command(show.cmd)
-    cli.add_command(status.cmd)
-    cli.add_command(stop.cmd)
+    for name in [
+        "chat", "config", "cp", "create", "ls", "ps",
+        "pull", "push", "rm", "run", "show", "status", "stop",
+    ]:
+        mod = importlib.import_module(f".{name}", __package__)
+        cli.add_command(mod.cmd)
