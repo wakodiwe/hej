@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def _get_stop_params(param_str: str) -> list[str]:
+    """Extract stop parameter values from a modelfile parameter string."""
     stop_params = []
     for line in param_str.splitlines():
         line = line.strip()
@@ -27,6 +28,7 @@ def _get_stop_params(param_str: str) -> list[str]:
 
 
 def _print_raw(content: str) -> None:
+    """Print raw content stripped of leading/trailing whitespace."""
     Console().print(content.strip())
 
 

@@ -86,7 +86,7 @@ hej run -m smollm:135m "hello"         # Override model
 hej ls                                 # List installed models
 hej ps                                 # List running models
 hej show phi3                          # Show model info
-hej show phi3 --full                   # Full model report (includes tensors)
+hej show phi3 --full                   # Show license, modelfile, template, and parameters
 hej show phi3 --json                   # Raw JSON output
 hej pull phi3                          # Download a model
 hej push phi3                          # Upload a model

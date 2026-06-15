@@ -332,6 +332,13 @@ class TestShow:
         assert '"key": "value"' in result.output
 
     @patch("hej.commands.show.requests.post")
+    def test_show_jsonc(self, mock_post):
+        mock_post.return_value.json.return_value = {"key": "value"}
+        result = CliRunner().invoke(cli, ["show", "phi3", "--jsonc"])
+        assert result.exit_code == 0
+        assert result.output.rstrip("\n") == '{"key":"value"}'
+
+    @patch("hej.commands.show.requests.post")
     def test_show_segment_modelfile(self, mock_post):
         mock_post.return_value.json.return_value = {
             "modelfile": "FROM phi3\nSYSTEM hello"
@@ -361,6 +368,7 @@ class TestShow:
         }
         result = CliRunner().invoke(cli, ["show", "phi3", "--parameters"])
         assert result.exit_code == 0
+        assert 'stop "<|endoftext|>"' in result.output
 
     def test_show_help(self):
         result = CliRunner().invoke(cli, ["show", "--help"])
@@ -368,6 +376,7 @@ class TestShow:
         assert "Show information" in result.output
         assert "--full" in result.output
         assert "--json" in result.output
+        assert "--jsonc" in result.output
 
 
 class TestPull:

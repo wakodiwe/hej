@@ -47,6 +47,7 @@ def _resolve_host(val: str) -> str:
 
 
 def _parse_duration(val: str) -> int | None:
+    """Parse a timeout string into seconds, or None if invalid."""
     try:
         return int(val)
     except ValueError:
