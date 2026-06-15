@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 @click.command("push", context_settings=CONTEXT_SETTINGS)
 @click.argument("model")
 @click.option("--host", help="Ollama server URL")
-def cmd(model, host):
+def cmd(model: str, host: str | None = None) -> None:
     """Upload a model"""
     cfg = config.load()
     host = host or cfg["host"]

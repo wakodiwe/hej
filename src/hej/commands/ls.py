@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 @click.command("ls", context_settings=CONTEXT_SETTINGS)
 @click.option("--host", help="Ollama server URL")
 @click.option("--timeout", type=int, help="Request timeout in seconds")
-def cmd(host, timeout):
+def cmd(host: str | None = None, timeout: int | None = None) -> None:
     """List Ollama models."""
 
     logger.debug(__name__)

@@ -11,11 +11,13 @@ from hej.progress import wake_progress
 logger = logging.getLogger(__name__)
 
 
-def _run_streaming(model, prompt, host, timeout, stats=True, keep_alive=None):
+def _run_streaming(
+    model: str, prompt: str, host: str, timeout: int, stats: bool = True, keep_alive: int | str | None = None
+) -> None:
     """Stream tokens from the API."""
     stream = generate_stream(model, prompt, host, timeout, keep_alive=keep_alive)
 
-    metadata = {}
+    metadata: dict = {}
 
     with wake_progress(model):
         try:
@@ -27,6 +29,7 @@ def _run_streaming(model, prompt, host, timeout, stats=True, keep_alive=None):
         if kind == "token":
             click.echo(value, nl=False)
         elif kind == "stats":
+            assert isinstance(value, dict)
             metadata = value
 
     click.echo()
@@ -34,7 +37,9 @@ def _run_streaming(model, prompt, host, timeout, stats=True, keep_alive=None):
         print_stats(metadata)
 
 
-def _run_single(model, prompt, host, timeout, stats=True, keep_alive=None):
+def _run_single(
+    model: str, prompt: str, host: str, timeout: int, stats: bool = True, keep_alive: int | str | None = None
+) -> None:
     """Fetch the full response at once (no streaming)."""
     with wake_progress(model):
         response, metadata = generate(
@@ -53,7 +58,15 @@ def _run_single(model, prompt, host, timeout, stats=True, keep_alive=None):
 @click.option("--stats/--no-stats", default=None, help="Show timing stats")
 @click.option("--timeout", type=int, help="Request timeout in seconds")
 @click.option("--keep-alive", type=int, help="Keep model loaded N seconds (0 = unload)")
-def cmd(prompt, model, host, stream, stats, timeout, keep_alive):
+def cmd(
+    prompt: str,
+    model: str | None = None,
+    host: str | None = None,
+    stream: bool | None = None,
+    stats: bool | None = None,
+    timeout: int | None = None,
+    keep_alive: int | None = None,
+) -> None:
     """Run a model"""
     logger.debug("run.cmd(%r, model=%r)", prompt, model)
 

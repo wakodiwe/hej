@@ -75,7 +75,14 @@ def chat_single(
 @click.option("--stats/--no-stats", default=None, help="Show timing stats")
 @click.option("--timeout", type=int, help="Request timeout in seconds")
 @click.option("--reset", is_flag=True, help="Clear chat history")
-def cmd(host, model, stream, stats, timeout, reset):
+def cmd(
+    host: str | None = None,
+    model: str | None = None,
+    stream: bool | None = None,
+    stats: bool | None = None,
+    timeout: int | None = None,
+    reset: bool = False,
+) -> None:
     """Interactive multi-turn chat"""
     from hej.api import isrunning
 
@@ -90,7 +97,7 @@ def cmd(host, model, stream, stats, timeout, reset):
         click.echo("Error: Ollama server is not running", err=True)
         raise SystemExit(1)
 
-    messages = []
+    messages: list[dict[str, str]] = []
 
     if reset:
         click.echo("Chat history cleared.")
@@ -105,7 +112,6 @@ def cmd(host, model, stream, stats, timeout, reset):
         try:
             from prompt_toolkit import prompt
             user_input = prompt("\n> ", vi_mode=True)
-            # user_input = input("\n> ")
         except EOFError:
             break
 
@@ -131,6 +137,7 @@ def cmd(host, model, stream, stats, timeout, reset):
                     if isinstance(item, tuple) and item[0] == "stats":
                         metadata = item[1]
                     else:
+                        assert isinstance(item, str)
                         response += item
                         click.echo(item, nl=False)
             click.echo("")

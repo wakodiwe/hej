@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 @click.command("status", context_settings=CONTEXT_SETTINGS)
 @click.option("--host", help="Ollama server URL")
-def cmd(host):
+def cmd(host: str | None = None) -> None:
     """Show Ollama server information"""
     logger.debug(f"{__name__} called")
 

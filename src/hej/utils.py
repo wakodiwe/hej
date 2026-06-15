@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+import logging
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 
 def fmt_date(s: str, format_type: str = "datetime") -> str:
-    dt = datetime.fromisoformat(s)
+    try:
+        dt = datetime.fromisoformat(s)
+    except ValueError:
+        logger.warning("invalid date string: %r", s)
+        return ""
     _date = dt.strftime("%d.%m.%y")
     _time = dt.strftime("%I:%M")
     if format_type == "datetime":

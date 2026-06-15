@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 @click.argument("model")
 @click.option("--force", "-f", is_flag=True, help="Skip confirmation")
 @click.option("--host", help="Ollama server URL")
-def cmd(model, force, host):
+def cmd(model: str, force: bool = False, host: str | None = None) -> None:
     """Delete a model"""
     cfg = config.load()
     host = host or cfg["host"]

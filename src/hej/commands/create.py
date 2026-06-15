@@ -18,7 +18,15 @@ logger = logging.getLogger(__name__)
 @click.option("--quantize", type=click.Choice(["q4_K_M", "q4_K_S", "q8_0"]))
 @click.option("--license", help="Model license")
 @click.option("--host", help="Ollama server URL")
-def cmd(model, from_model, system, template, quantize, license, host):
+def cmd(
+    model: str,
+    from_model: str | None = None,
+    system: str | None = None,
+    template: str | None = None,
+    quantize: str | None = None,
+    license: str | None = None,
+    host: str | None = None,
+) -> None:
     """Create a model from a base model"""
     cfg = config.load()
     host = host or cfg["host"]

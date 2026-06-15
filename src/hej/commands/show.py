@@ -39,7 +39,7 @@ def _print_parameters(param_str: str) -> None:
         Console().print("\n".join(f"stop {s}" for s in stop_params))
 
 
-def simple_report(params: dict):
+def simple_report(params: dict) -> None:
     """Print a simplified model report similar to ollama show <model>"""
     details = params.get("details", {})
     model_info = params.get("model_info", {})
@@ -95,17 +95,17 @@ def simple_report(params: dict):
 @click.option("--license", "show_license", is_flag=True, help="Show license")
 @click.option("--parameters", is_flag=True, help="Show parameters")
 def cmd(
-    model,
-    host,
-    verbose,
-    json_output,
-    json_compact,
-    full,
-    modelfile,
-    template,
-    show_license,
-    parameters,
-):
+    model: str,
+    host: str | None = None,
+    verbose: bool = False,
+    json_output: bool = False,
+    json_compact: bool = False,
+    full: bool = False,
+    modelfile: bool = False,
+    template: bool = False,
+    show_license: bool = False,
+    parameters: bool = False,
+) -> None:
     """Show information for a MODEL"""
 
     logger.debug("show.cmd(%r)", model)

@@ -1,7 +1,10 @@
 """Progress display utilities using Rich."""
 
+from __future__ import annotations
+
 import json
 import logging
+from collections.abc import Generator
 from contextlib import contextmanager
 
 import click
@@ -22,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 @contextmanager
-def loading(message: str = "Processing..."):
+def loading(message: str = "Processing...") -> Generator[None, None, None]:
     """Show a spinner while a task is running.
 
     Args:
@@ -40,7 +43,7 @@ def loading(message: str = "Processing..."):
 
 
 @contextmanager
-def wake_progress(model: str):
+def wake_progress(model: str) -> Generator[None, None, None]:
     """Show a loading indicator while waking a model.
 
     Displays ``<spinner> Waking <model> <elapsed>`` while loading,

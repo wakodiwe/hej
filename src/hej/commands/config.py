@@ -25,7 +25,7 @@ stats = true
 """
 
 
-def _ensure_config_dir():
+def _ensure_config_dir() -> None:
     """Create the config directory if it doesn't exist."""
     config.CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -54,7 +54,7 @@ def _key_source(key: str) -> str:
 @click.option("--pretty", is_flag=True, help="Show effective config with sources")
 @click.option("--path", is_flag=True, help="Show config file path")
 @click.option("--edit", is_flag=True, help="Open config in $EDITOR")
-def cmd(write_, pretty, path, edit):
+def cmd(write_: bool, pretty: bool, path: bool, edit: bool) -> None:
     """View and manage hej configuration."""
     logger.debug("config.cmd()")
 
@@ -84,7 +84,7 @@ def cmd(write_, pretty, path, edit):
         click.echo(SAMPLE_CONFIG, nl=False)
 
 
-def _show_pretty():
+def _show_pretty() -> None:
     """Display where each value comes from."""
     console = Console(no_color=True, highlight=False)
     cfg = config.load()

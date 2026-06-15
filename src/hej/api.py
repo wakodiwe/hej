@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import sys
+from collections.abc import Iterator
 
 import click
 import requests
@@ -12,7 +13,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 
-def api_error(e: Exception, host: str = ""):
+def api_error(e: Exception, host: str = "") -> None:
     """Print a user-facing error message and exit.
 
     Args:
@@ -20,22 +21,26 @@ def api_error(e: Exception, host: str = ""):
         host: The Ollama server host URL (used in connection error messages).
     """
     if isinstance(e, requests.ConnectionError):
+        logger.error("Connection error to %s: %s", host, e)
         click.echo(f"Error: cannot connect to Ollama server at {host}", err=True)
     elif isinstance(e, requests.Timeout):
+        logger.error("Request timed out: %s", e)
         click.echo("Error: request timed out", err=True)
     elif isinstance(e, requests.HTTPError):
         try:
             resp = e.response
             msg = resp.json().get("error", str(e)) if resp is not None else str(e)
-        except Exception:
+        except ValueError:
+            logger.exception("Failed to parse error response JSON")
             msg = str(e)
         click.echo(f"Error: {msg}", err=True)
     else:
+        logger.error("Unexpected error: %s", e)
         click.echo(f"Error: {e}", err=True)
     sys.exit(1)
 
 
-def print_stats(metadata: dict):
+def print_stats(metadata: dict) -> None:
     """Print timing stats line if metadata contains eval_count.
 
     Args:
@@ -111,6 +116,7 @@ def generate(
     payload: dict = {"model": model, "prompt": prompt, "stream": False}
     if keep_alive is not None:
         payload["keep_alive"] = keep_alive
+    logger.debug("POST %s/api/generate model=%s timeout=%d", host, model, timeout)
     try:
         resp = requests.post(
             f"{host}/api/generate",
@@ -130,7 +136,7 @@ def generate_stream(
     host: str,
     timeout: int,
     keep_alive: int | str | None = None,
-):
+) -> Iterator[tuple[str, object]]:
     """Yield ("token", str) chunks, then ("stats", dict) on completion.
 
     First yield is ("loading", bool) indicating if model was loaded from disk.
@@ -148,6 +154,7 @@ def generate_stream(
     payload: dict = {"model": model, "prompt": prompt, "stream": True}
     if keep_alive is not None:
         payload["keep_alive"] = keep_alive
+    logger.debug("POST %s/api/generate (stream) model=%s timeout=%d", host, model, timeout)
     try:
         with requests.post(
             f"{host}/api/generate",

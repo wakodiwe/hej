@@ -13,6 +13,7 @@ import logging
 import os
 import tomllib
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +60,7 @@ def _find_config() -> Path | None:
     return CONFIG_PATH if CONFIG_PATH.exists() else None
 
 
-def load() -> dict:
+def load() -> dict[str, Any]:
     """Load configuration with precedence: defaults → config → env vars.
 
     Returns:

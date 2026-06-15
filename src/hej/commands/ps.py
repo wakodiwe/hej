@@ -14,7 +14,7 @@ from hej.utils import fmt_date, fmt_size
 
 @click.command("ps", context_settings=CONTEXT_SETTINGS)
 @click.option("--host", help="Ollama server URL")
-def cmd(host):
+def cmd(host: str | None = None) -> None:
     """List running models"""
     cfg = config.load()
     host = host or cfg["host"]
@@ -30,7 +30,7 @@ def cmd(host):
         click.echo("No models in memory")
         return
 
-    table = Table(title="", box=False, pad_edge=False)
+    table = Table(title="", box=None, pad_edge=False)
     for name in ["MODEL", "UNTIL", "CTX", "SIZE", "PROCESSOR", "ID"]:
         table.add_column(name, no_wrap=True)
 

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 @click.argument("source")
 @click.argument("destination")
 @click.option("--host", help="Ollama server URL")
-def cmd(source, destination, host):
+def cmd(source: str, destination: str, host: str | None = None) -> None:
     """Copy a model"""
     cfg = config.load()
     host = host or cfg["host"]
