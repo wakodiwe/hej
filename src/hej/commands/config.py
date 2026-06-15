@@ -30,19 +30,6 @@ def _ensure_config_dir():
     config.CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def _make_table(title: str, headers: list[str]) -> Table:
-    """Create a plain table with headline-only underline."""
-    table = Table(
-        title=title,
-        box=box.SIMPLE,
-        show_edge=False,
-        pad_edge=False,
-    )
-    for h in headers:
-        table.add_column(h)
-    return table
-
-
 def _key_source(key: str) -> str:
     """Return where *key* gets its value: ``"env"``, ``"conf"``, or ``"default"``."""
     env_var = config.ENV_MAP.get(key)
@@ -102,7 +89,9 @@ def _show_pretty():
     console = Console(no_color=True, highlight=False)
     cfg = config.load()
 
-    t = _make_table("Config", ["Key", "Value", "Source"])
+    t = Table(title="Config", box=box.SIMPLE, show_edge=False, pad_edge=False)
+    for h in ["Key", "Value", "Source"]:
+        t.add_column(h)
     for key in config.DEFAULTS:
         t.add_row(key, repr(cfg[key]), _key_source(key))
     console.print(t)

@@ -4,15 +4,10 @@ import logging
 
 import json
 
-import math
-
 import click
 import requests
 
 from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
-from rich.text import Text
 
 from hej import CONTEXT_SETTINGS, config
 from hej.api import api_error
@@ -20,45 +15,26 @@ from hej.api import api_error
 logger = logging.getLogger(__name__)
 
 
-def _print_license(license_text: str) -> None:
-    """Print the license.
-    Args:
-        license_text: Raw license text.
-    """
-    Console().print(license_text.strip())
-
-
-def _print_modelfile(modelfile: str) -> None:
-    """Print the modelfile.
-    Args:
-        modelfile: Raw modelfile content.
-    """
-    Console().print(modelfile.strip())
-
-
-def _print_parameters(params: dict) -> None:
-    """Print inference parameters.
-    Args:
-        params: API response dict containing a ``"parameters"`` key.
-    """
-    # param_str = params.get("parameters", "")
+def _get_stop_params(param_str: str) -> list[str]:
     stop_params = []
-    for line in params.splitlines():
+    for line in param_str.splitlines():
         line = line.strip()
         if line.startswith("stop"):
             parts = line.split(maxsplit=1)
             if len(parts) == 2:
                 stop_params.append(parts[1].strip())
+    return stop_params
+
+
+def _print_raw(content: str) -> None:
+    Console().print(content.strip())
+
+
+def _print_parameters(param_str: str) -> None:
+    """Print inference parameters."""
+    stop_params = _get_stop_params(param_str)
     if stop_params:
         Console().print("\n".join(f"stop {s}" for s in stop_params))
-
-
-def _print_template(template: str) -> None:
-    """Print the template.
-    Args:
-        template: Raw template content.
-    """
-    Console().print(template.strip())
 
 
 def simple_report(params: dict):
@@ -78,13 +54,7 @@ def simple_report(params: dict):
     if isinstance(embed_len, int):
         embed_len = f"{embed_len:,}"
     caps = capabilities if capabilities else ["none"]
-    stop_params = []
-    for line in param_str.splitlines():
-        line = line.strip()
-        if line.startswith("stop"):
-            parts = line.split(maxsplit=1)
-            if len(parts) == 2:
-                stop_params.append(parts[1].strip())
+    stop_params = _get_stop_params(param_str)
     license_lines = license_text.strip().splitlines()
     first_license_line = license_lines[0] if license_lines else ""
     second_license_line = license_lines[1] if len(license_lines) > 1 else ""
@@ -164,15 +134,15 @@ def cmd(
         return
 
     if show_license:
-        _print_license(data.get("license", ""))
+        _print_raw(data.get("license", ""))
         return
 
     if modelfile:
-        _print_modelfile(data.get("modelfile", ""))
+        _print_raw(data.get("modelfile", ""))
         return
 
     if template:
-        _print_template(data.get("template", ""))
+        _print_raw(data.get("template", ""))
         return
 
     if parameters:
@@ -180,9 +150,9 @@ def cmd(
         return
 
     if full:
-        _print_license(data.get("license", ""))
-        _print_modelfile(data.get("modelfile", ""))
-        _print_template(data.get("template", ""))
+        _print_raw(data.get("license", ""))
+        _print_raw(data.get("modelfile", ""))
+        _print_raw(data.get("template", ""))
         _print_parameters(data.get("parameters", ""))
         return
 

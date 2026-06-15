@@ -28,22 +28,10 @@ def loading(message: str = "Processing..."):
     Args:
         message: Description text to display next to the spinner.
     """
-    from rich.text import Text
-
-    class PlainTimeColumn(TimeElapsedColumn):
-        """A time column that does not show a spinner prefix."""
-
-        def render(self, task):
-            """Render elapsed time without spinner prefix."""
-            elapsed = task.finished_time if task.finished else task.elapsed
-            if elapsed is None:
-                return Text("0.0s")
-            return Text(f"- {elapsed:.1f}s")
-
     progress = Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
-        PlainTimeColumn(),
+        TimeElapsedColumn(),
         transient=True,
     )
     with progress:

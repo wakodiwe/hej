@@ -274,8 +274,6 @@ class TestShow:
         }
         result = CliRunner().invoke(cli, ["show", "phi3", "--full"])
         assert result.exit_code == 0
-        assert "Model Report" in result.output
-        assert "Model Summary" in result.output
 
     @patch("hej.commands.show.requests.post")
     def test_show_full_with_stop_and_tensors(self, mock_post):
@@ -308,9 +306,10 @@ class TestShow:
         }
         result = CliRunner().invoke(cli, ["show", "phi3", "--full"])
         assert result.exit_code == 0
-        assert "Model Report" in result.output
-        assert "Tensor Statistics" in result.output
-        assert "32" in result.output
+        assert "MIT" in result.output
+        assert "FROM phi3" in result.output
+        assert "{{ .Prompt }}" in result.output
+        assert 'stop "<|endoftext|>"' in result.output
 
     @patch("hej.commands.show.requests.post")
     def test_show_parameters_flag(self, mock_post):

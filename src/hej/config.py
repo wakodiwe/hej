@@ -72,12 +72,8 @@ def _parse_duration(val: str) -> int | None:
 
 
 def _find_config() -> Path | None:
-    """Return the first existing config file from XDG paths, or ``None``."""
-    candidates = [CONFIG_PATH]
-    for p in candidates:
-        if p.exists():
-            return p
-    return None
+    """Return the config file path if it exists, or ``None``."""
+    return CONFIG_PATH if CONFIG_PATH.exists() else None
 
 
 def load() -> dict:

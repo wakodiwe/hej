@@ -2,7 +2,6 @@
 
 Public API:
     log.setup(verbosity, quiet, color)   # call once, in cli()
-    log.get(name)                        # convenience for getLogger
 """
 
 from __future__ import annotations
@@ -53,14 +52,3 @@ def setup(verbosity: int = 0, quiet: bool = False, color: bool = True) -> None:
 
     logging.basicConfig(level=level, handlers=[handler], force=True)
 
-
-def get(name: str) -> logging.Logger:
-    """Shortcut for logging.getLogger(name).
-
-    Args:
-        name: Logger name (typically ``__name__``).
-
-    Returns:
-        A :class:`logging.Logger` instance.
-    """
-    return logging.getLogger(name)

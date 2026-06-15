@@ -2,7 +2,7 @@
 
 import logging
 
-from hej.log import _ColorFormatter, get, setup
+from hej.log import _ColorFormatter, setup
 
 
 class TestSetup:
@@ -30,13 +30,6 @@ class TestSetup:
         setup()
         root = logging.getLogger()
         assert root.level == logging.WARNING
-
-
-class TestGet:
-    def test_get_logger(self):
-        logger = get("test_logger")
-        assert isinstance(logger, logging.Logger)
-        assert logger.name == "test_logger"
 
 
 class TestColorFormatter:
