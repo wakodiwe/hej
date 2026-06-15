@@ -1,5 +1,17 @@
 # hej
 
+```
+┌────────────────────────────────┐
+│  Calvin:  "I made a program!"  │
+│  Hobbes:  "What does it do?"   │
+│                                │
+│  $ hej                         │
+│  hej                           │
+│                                │
+│  Calvin:  "Exactly."           │
+└────────────────────────────────┘
+```
+
 ![Python](https://img.shields.io/badge/python-3.11+-blue)
 ![License](https://img.shields.io/badge/license-Unlicense-green)
 
