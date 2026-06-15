@@ -75,10 +75,18 @@ def _find_config() -> Path | None:
 def _validate(cfg: dict[str, Any]) -> dict[str, Any]:
     """Validate and coerce config values, logging warnings for bad entries."""
     if not isinstance(cfg.get("timeout"), (int, float)) or cfg["timeout"] <= 0:
-        logger.warning("Invalid timeout %r, resetting to default %s", cfg.get("timeout"), DEFAULTS["timeout"])
+        logger.warning(
+            "Invalid timeout %r, resetting to default %s",
+            cfg.get("timeout"),
+            DEFAULTS["timeout"],
+        )
         cfg["timeout"] = DEFAULTS["timeout"]
     if not isinstance(cfg.get("host"), str) or not cfg["host"]:
-        logger.warning("Invalid host %r, resetting to default %s", cfg.get("host"), DEFAULTS["host"])
+        logger.warning(
+            "Invalid host %r, resetting to default %s",
+            cfg.get("host"),
+            DEFAULTS["host"],
+        )
         cfg["host"] = DEFAULTS["host"]
     return cfg
 

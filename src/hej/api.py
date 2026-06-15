@@ -161,7 +161,9 @@ def generate_stream(
     payload: dict = {"model": model, "prompt": prompt, "stream": True}
     if keep_alive is not None:
         payload["keep_alive"] = keep_alive
-    logger.debug("POST %s/api/generate (stream) model=%s timeout=%d", host, model, timeout)
+    logger.debug(
+        "POST %s/api/generate (stream) model=%s timeout=%d", host, model, timeout
+    )
     try:
         with requests.post(
             f"{host}/api/generate",

@@ -1,8 +1,7 @@
 """show command"""
 
-import logging
-
 import json
+import logging
 
 import click
 

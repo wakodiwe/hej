@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 import logging
-from collections.abc import Callable
 
 _RESET = "\033[0m"
 _COLORS = {
@@ -67,7 +66,6 @@ def setup(
         level = _LEVELS[min(verbosity, len(_LEVELS) - 1)]
 
     handler: logging.Handler = logging.StreamHandler()
-    formatter: Callable[[logging.LogRecord], str]
     if json_output:
         handler.setFormatter(_JsonFormatter("%(message)s"))
     elif color:
@@ -76,4 +74,3 @@ def setup(
         handler.setFormatter(logging.Formatter("%(levelname)s %(message)s"))
 
     logging.basicConfig(level=level, handlers=[handler], force=True)
-

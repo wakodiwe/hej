@@ -25,6 +25,8 @@ A lightweight CLI for interacting with [ollama](https://ollama.ai).
 - **Model Management**: List, download, upload, copy, and delete models  
 - **Server Control**: Check server status, list running models, and stop models
 - **Interactive Chat**: Built-in chat mode for multi-turn conversations
+- **Prompt Templates**: Reusable prompt patterns with `{input}` placeholder
+- **Save/Load Conversations**: Persist chat sessions, export as JSON or Markdown
 - **Flexible Configuration**: Customizable via `config.toml` (model, host, timeout)
 - **Streaming Display**: Token-by-token output with a loading spinner and progress indicator
 
@@ -104,6 +106,7 @@ hej config --help                      # Show help for config command
 hej config -w                          # Write config to ~/.config/hej/config.toml
 hej run "hello"                        # Send prompt (uses default model from config)
 hej run -m smollm:135m "hello"         # Override model
+hej run -t summarize "long text here"  # Apply a prompt template
 hej ls                                 # List installed models
 hej ps                                 # List running models
 hej show phi3                          # Show model info
@@ -117,6 +120,19 @@ hej rm phi3                            # Delete a model (confirms)
 hej rm phi3 -f                         # Delete without confirming
 hej stop phi3                          # Stop a running model
 hej chat                               # Interactive chat (type 'exit' to quit)
+hej chat -t code-review                # Chat with a system prompt template
+hej chat --save-as my-session          # Save conversation on exit
+hej chat --resume my-session           # Resume a saved conversation
+hej template create summarize          # Create a prompt template (opens editor)
+hej template create greet --content "You are helpful."  # Create inline
+hej template list                      # List all templates
+hej template show summarize            # Show template content
+hej template delete summarize          # Delete a template
+hej session list                       # List saved chat sessions
+hej session load my-session            # View session content
+hej session export my-session --format md  # Export as Markdown
+hej session delete my-session          # Delete a session
+hej session search "keyword"           # Search sessions by content
 ```
 
 ## Tests

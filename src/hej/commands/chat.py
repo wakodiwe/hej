@@ -74,20 +74,28 @@ def chat_single(
 @click.command("chat", context_settings=CONTEXT_SETTINGS)
 @click.option("--host", help="Ollama server URL")
 @click.option("-m", "--model", help="Model name")
+@click.option("-t", "--template", "template_name", help="System prompt template name")
 @click.option("--stream/--no-stream", default=None, help="Stream output")
 @click.option("--stats/--no-stats", default=None, help="Show timing stats")
 @click.option("--timeout", type=int, help="Request timeout in seconds")
 @click.option("--reset", is_flag=True, help="Clear chat history")
+@click.option("--save-as", "save_name", help="Save conversation on exit")
+@click.option("--resume", "resume_name", help="Resume saved conversation")
 def cmd(
     host: str | None = None,
     model: str | None = None,
+    template_name: str | None = None,
     stream: bool | None = None,
     stats: bool | None = None,
     timeout: int | None = None,
     reset: bool = False,
+    save_name: str | None = None,
+    resume_name: str | None = None,
 ) -> None:
     """Interactive multi-turn chat"""
     from hej.api import isrunning
+    from hej.commands.session import load_session, save_session
+    from hej.commands.template import load_template
 
     cfg = config.load()
     host = host or cfg["host"]
@@ -102,6 +110,29 @@ def cmd(
 
     messages: list[dict[str, str]] = []
 
+    if template_name:
+        tmpl = load_template(template_name)
+        if tmpl is None:
+            click.echo(f"Template '{template_name}' not found", err=True)
+            raise SystemExit(1)
+        messages.append({"role": "system", "content": tmpl})
+
+    if resume_name:
+        data = load_session(resume_name)
+        if data is None:
+            click.echo(f"Session '{resume_name}' not found", err=True)
+            raise SystemExit(1)
+        messages = data.get("messages", [])
+        model = data.get("model", model)
+        if not save_name:
+            save_name = resume_name
+
+    if save_name:
+        from hej.commands.session import _session_path as _spath
+
+        if _spath(save_name).exists():
+            click.echo(f"Resuming existing session '{save_name}'.")
+
     if reset:
         click.echo("Chat history cleared.")
         return
@@ -111,46 +142,58 @@ def cmd(
     )
     click.echo("---")
 
-    while True:
-        try:
-            from prompt_toolkit import prompt
-            user_input = prompt("\n> ", vi_mode=True)
-        except EOFError:
-            break
+    try:
+        while True:
+            try:
+                from prompt_toolkit import prompt
 
-        if user_input.lower() in ("exit", "quit", "q"):
-            break
+                user_input = prompt("\n> ", vi_mode=True)
+            except EOFError:
+                break
 
-        if user_input.lower() == "reset":
-            messages = []
-            click.echo("Chat history cleared.")
-            continue
+            if user_input.lower() in ("exit", "quit", "q"):
+                break
 
-        if not user_input.strip():
-            continue
+            if user_input.lower() == "reset":
+                messages = []
+                click.echo("Chat history cleared.")
+                continue
 
-        messages.append({"role": "user", "content": user_input})
+            if not user_input.strip():
+                continue
 
-        if streaming:
-            click.echo("")
-            response = ""
-            metadata = {}
-            with wake_progress(model):
-                for item in chat_stream(model, messages, host, timeout):
-                    if isinstance(item, tuple) and item[0] == "stats":
-                        metadata = item[1]
-                    else:
-                        assert isinstance(item, str)
-                        response += item
-                        click.echo(item, nl=False)
-            click.echo("")
-            if stats:
-                print_stats(metadata)
-        else:
-            with wake_progress(model):
-                response, metadata = chat_single(model, messages, host, timeout)
-            click.echo(response)
-            if stats:
-                print_stats(metadata)
+            messages.append({"role": "user", "content": user_input})
 
-        messages.append({"role": "assistant", "content": response})
+            if save_name:
+                save_session(save_name, model, messages)
+
+            if streaming:
+                click.echo("")
+                response = ""
+                metadata = {}
+                with wake_progress(model):
+                    for item in chat_stream(model, messages, host, timeout):
+                        if isinstance(item, tuple) and item[0] == "stats":
+                            metadata = item[1]
+                        else:
+                            assert isinstance(item, str)
+                            response += item
+                            click.echo(item, nl=False)
+                click.echo("")
+                if stats:
+                    print_stats(metadata)
+            else:
+                with wake_progress(model):
+                    response, metadata = chat_single(model, messages, host, timeout)
+                click.echo(response)
+                if stats:
+                    print_stats(metadata)
+
+            messages.append({"role": "assistant", "content": response})
+
+            if save_name:
+                save_session(save_name, model, messages)
+    except KeyboardInterrupt:
+        if save_name:
+            save_session(save_name, model, messages)
+        raise

@@ -14,8 +14,21 @@ def register_commands(cli: click.Group) -> None:
         cli: The root Click group.
     """
     for name in [
-        "chat", "config", "cp", "create", "ls", "ps",
-        "pull", "push", "rm", "run", "show", "status", "stop",
+        "chat",
+        "config",
+        "cp",
+        "create",
+        "ls",
+        "ps",
+        "pull",
+        "push",
+        "rm",
+        "run",
+        "show",
+        "status",
+        "stop",
+        "session",
+        "template",
     ]:
         mod = importlib.import_module(f".{name}", __package__)
         cli.add_command(mod.cmd)

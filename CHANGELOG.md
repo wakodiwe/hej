@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0 (2026-06-15)
+
+- Templates: `hej template create/list/show/delete`, reusable prompt patterns with `{input}` placeholder
+- Sessions: `hej session list/load/export/delete/search`, persist and resume chat conversations
+- New flags: `--template`/`-t` on `run` and `chat`, `--save-as` and `--resume` on `chat`
+
 ## 1.0.0 (2026-06-15)
 
 - Error handling: replaced bare `except Exception:` with specific types in API client
