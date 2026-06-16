@@ -2,13 +2,15 @@
 
 Dispatches to either streaming or single-response mode based on
 config/CLI flags.  Handles server health check, model wake-up
-indicator, and timing stats display.
+indicator, timing stats display, clipboard copy, and editor open.
 
 Examples:
     hej run "hello world"
     hej run -m llama3 "explain quantum physics"
     hej run --stream "write a poem"
     hej run --no-stats "quick question"
+    hej run --copy "tell me a joke"
+    hej run --open "write python code"
 
 Raises:
     SystemExit: If the Ollama server is not reachable.
@@ -21,6 +23,7 @@ import click
 from hej import CONTEXT_SETTINGS, config
 from hej.api import generate, generate_stream, isrunning, print_stats
 from hej.progress import wake_progress
+from hej.utils import copy_to_clipboard, open_in_editor
 
 logger = logging.getLogger(__name__)
 
@@ -32,21 +35,27 @@ def _run_streaming(
     timeout: int,
     stats: bool = True,
     keep_alive: int | str | None = None,
-) -> None:
-    """Stream tokens from the API."""
+) -> str:
+    """Stream tokens from the API.
+
+    Returns:
+        The full response text.
+    """
     stream = generate_stream(model, prompt, host, timeout, keep_alive=keep_alive)
 
     metadata: dict = {}
+    response: list[str] = []
 
     with wake_progress(model):
         try:
             kind, value = next(stream)
         except StopIteration:
-            return
+            return ""
 
     for kind, value in stream:
         if kind == "token":
             click.echo(value, nl=False)
+            response.append(value)
         elif kind == "stats":
             assert isinstance(value, dict)
             metadata = value
@@ -54,6 +63,7 @@ def _run_streaming(
     click.echo()
     if stats:
         print_stats(metadata)
+    return "".join(response)
 
 
 def _run_single(
@@ -63,8 +73,12 @@ def _run_single(
     timeout: int,
     stats: bool = True,
     keep_alive: int | str | None = None,
-) -> None:
-    """Fetch the full response at once (no streaming)."""
+) -> str:
+    """Fetch the full response at once (no streaming).
+
+    Returns:
+        The response text.
+    """
     with wake_progress(model):
         response, metadata = generate(
             model, prompt, host, timeout, keep_alive=keep_alive
@@ -72,6 +86,7 @@ def _run_single(
     click.echo(response)
     if stats:
         print_stats(metadata)
+    return response
 
 
 @click.command("run", context_settings=CONTEXT_SETTINGS)
@@ -83,6 +98,8 @@ def _run_single(
 @click.option("--stats/--no-stats", default=None, help="Show timing stats")
 @click.option("--timeout", type=int, help="Request timeout in seconds")
 @click.option("--keep-alive", type=int, help="Keep model loaded N seconds (0 = unload)")
+@click.option("--copy", is_flag=True, help="Copy response to clipboard")
+@click.option("--open", "open_editor", is_flag=True, help="Open response in editor")
 def cmd(
     prompt: str,
     model: str | None = None,
@@ -92,6 +109,8 @@ def cmd(
     stats: bool | None = None,
     timeout: int | None = None,
     keep_alive: int | None = None,
+    copy: bool = False,
+    open_editor: bool = False,
 ) -> None:
     """Run a model"""
     from hej.commands.template import apply_template, load_template
@@ -118,6 +137,12 @@ def cmd(
         raise SystemExit(1)
 
     if streaming:
-        _run_streaming(model, prompt, host, timeout, stats=stats, keep_alive=keep_alive)
+        response = _run_streaming(model, prompt, host, timeout, stats=stats, keep_alive=keep_alive)
     else:
-        _run_single(model, prompt, host, timeout, stats=stats, keep_alive=keep_alive)
+        response = _run_single(model, prompt, host, timeout, stats=stats, keep_alive=keep_alive)
+
+    if copy and response:
+        copy_to_clipboard(response)
+        click.echo("(copied to clipboard)")
+    if open_editor and response:
+        open_in_editor(response)

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.1 (2026-06-16)
+
+- UX: `--copy` flag on `run` and `chat` - copies response to clipboard
+- UX: `--open` flag on `run` and `chat` - opens response in `$EDITOR`
+- UX: `hej alias` - manage command aliases (`set`/`get`/`list`/`delete`)
+- UX: `--install-completion` - print shell completion eval command
+- Tests: added test_alias.py, expanded test_cli.py, test_utils.py
+- Coverage: improved from 79% to 84%
+
 ## 1.2.0 (2026-06-15)
 
 - Batch: `hej batch --input --output --concurrency` for bulk prompt evaluation

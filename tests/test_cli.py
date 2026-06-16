@@ -61,6 +61,13 @@ class TestStatus:
         assert "status" in result.output.lower()
 
 
+class TestCompletion:
+    def test_install_completion(self):
+        result = CliRunner().invoke(cli, ["--install-completion"])
+        assert result.exit_code == 0
+        assert "eval" in result.output
+
+
 class TestRun:
     def test_help(self):
         result = CliRunner().invoke(cli, ["run", "--help"])
@@ -139,6 +146,26 @@ class TestRun:
         result = CliRunner().invoke(cli, ["run", "hello"])
         assert result.exit_code == 0
         assert "Streamed response" in result.output
+
+    @patch("hej.commands.run.wake_progress")
+    @patch("hej.commands.run.generate", return_value=("copy me", {}))
+    @patch("hej.commands.run.isrunning", return_value=True)
+    @patch("hej.commands.run.copy_to_clipboard", return_value=True)
+    def test_run_with_copy(self, mock_copy, _mock1, _mock2, _mock3):
+        result = CliRunner().invoke(cli, ["run", "--copy", "hello"])
+        assert result.exit_code == 0
+        assert "copy me" in result.output
+        assert "copied to clipboard" in result.output
+        mock_copy.assert_called_once_with("copy me")
+
+    @patch("hej.commands.run.wake_progress")
+    @patch("hej.commands.run.generate", return_value=("open me", {}))
+    @patch("hej.commands.run.isrunning", return_value=True)
+    @patch("hej.commands.run.open_in_editor", return_value=True)
+    def test_run_with_open(self, mock_open, _mock1, _mock2, _mock3):
+        result = CliRunner().invoke(cli, ["run", "--open", "hello"])
+        assert result.exit_code == 0
+        mock_open.assert_called_once_with("open me")
 
 
 class TestLs:

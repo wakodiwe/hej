@@ -11,6 +11,7 @@ import click
 from hej import CONTEXT_SETTINGS, config
 from hej.api import api_error, extract_metadata, print_stats
 from hej.progress import wake_progress
+from hej.utils import copy_to_clipboard, open_in_editor
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +81,8 @@ def chat_single(
 @click.option("--reset", is_flag=True, help="Clear chat history")
 @click.option("--save-as", "save_name", help="Save conversation on exit")
 @click.option("--resume", "resume_name", help="Resume saved conversation")
+@click.option("--copy", is_flag=True, help="Copy each response to clipboard")
+@click.option("--open", "open_editor", is_flag=True, help="Open each response in editor")
 def cmd(
     host: str | None = None,
     model: str | None = None,
@@ -90,6 +93,8 @@ def cmd(
     reset: bool = False,
     save_name: str | None = None,
     resume_name: str | None = None,
+    copy: bool = False,
+    open_editor: bool = False,
 ) -> None:
     """Interactive multi-turn chat"""
     from hej.api import isrunning
@@ -189,6 +194,12 @@ def cmd(
                     print_stats(metadata)
 
             messages.append({"role": "assistant", "content": response})
+
+            if copy and response:
+                copy_to_clipboard(response)
+                click.echo("(copied to clipboard)")
+            if open_editor and response:
+                open_in_editor(response)
 
             if save_name:
                 save_session(save_name, model, messages)

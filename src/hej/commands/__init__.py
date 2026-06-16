@@ -14,6 +14,7 @@ def register_commands(cli: click.Group) -> None:
         cli: The root Click group.
     """
     for name in [
+        "alias",
         "chat",
         "config",
         "cp",

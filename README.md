@@ -32,6 +32,9 @@ A lightweight CLI for interacting with [ollama](https://ollama.ai).
 - **Performance Benchmarks**: Latency/throughput measurement with CSV export
 - **Flexible Configuration**: Customizable via `config.toml` (model, host, timeout)
 - **Streaming Display**: Token-by-token output with a loading spinner and progress indicator
+- **Clipboard & Editor**: `--copy` copies responses to clipboard, `--open` opens in `$EDITOR`
+- **Command Aliases**: `hej alias` — create custom shortcuts (e.g. `hej alias set hi 'run "hello"'`)
+- **Shell Completion**: `hej --install-completion` to set up tab completion
 
 The project is organized into core modules (CLI entry point, logging, configuration, Ollama HTTP client), 15+ subcommands, and includes a test suite using pytest. It's written almost entirely in Python (99.1%) with a Makefile component, released under the Unlicense (public domain).
 
@@ -150,6 +153,13 @@ hej bench -m phi3 --runs 5 \            # Benchmark model latency
     -p "hello world"
 hej bench -m phi3 -m llama3 \           # Benchmark multiple models
     --output results.csv
+hej run --copy "tell me a joke"         # Copy response to clipboard
+hej run --open "write python code"      # Open response in $EDITOR
+hej --install-completion                # Print shell completion setup
+hej alias set hi 'run "hello"'          # Create an alias
+hej alias list                          # List all aliases
+hej alias get hi                        # Show alias value
+hej alias delete hi                     # Delete an alias
 ```
 
 ## Tests

@@ -1,6 +1,7 @@
 """CLI root group and entry point."""
 
 import logging
+import os
 import sys
 
 import click
@@ -11,12 +12,31 @@ from .commands import register_commands
 logger = logging.getLogger(__name__)
 
 
+def _show_completion(ctx: click.Context, param: click.Parameter, value: bool) -> None:
+    """Print shell-completion eval command and exit."""
+    if not value or ctx.resilient_parsing:
+        return
+    shell = os.environ.get("SHELL", "").split("/")[-1] if os.environ.get("SHELL") else "bash"
+    prog = os.environ.get("COMP_WORDBREAKS", "hej").split()[0] if False else "hej"
+    click.echo(f"# Add this to your ~/.{shell}rc:")
+    click.echo(f"eval \"$(_HEJ_COMPLETE=source_{shell} hej)\"")
+    ctx.exit()
+
+
 @click.group(invoke_without_command=True, context_settings=CONTEXT_SETTINGS)
 @click.option("-q", "--quiet", is_flag=True, help="Only show errors")
 @click.option(
     "-v", "--verbose", count=True, help="Increase verbosity (-v info, -vv debug)"
 )
 @click.option("--no-color", is_flag=True, default=False, help="Disable coloured output")
+@click.option(
+    "--install-completion",
+    is_flag=True,
+    expose_value=False,
+    is_eager=True,
+    callback=_show_completion,
+    help="Print shell completion setup command",
+)
 @click.version_option(message="%(version)s", package_name="hej")
 @click.pass_context
 def cli(ctx: click.Context, verbose: int, quiet: bool, no_color: bool) -> None:
